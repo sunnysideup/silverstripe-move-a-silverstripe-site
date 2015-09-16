@@ -1,8 +1,8 @@
 Silverstripe Website Mover
 ===============================================
 
-Tool to help you move a site a Silverstripe Website
-from one site to another
+Tool to help you move a Silverstripe Website
+from one server to another.
 
 Developer
 -----------------------------------------------
