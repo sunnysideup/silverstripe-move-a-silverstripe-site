@@ -5,6 +5,8 @@
 	<style>
 		body {padding: 5%;}
 
+		header em {color: green; font-style: normal}
+		header u {color: blue; text-decoration: none;}
 		/* two cols */
 		form#WizardForm {width: 38%; float: left; min-width: 380px;}
 		#ToRunOuter {width: 58%; float: right; min-width: 380px;}
@@ -52,26 +54,33 @@
 			<li>the new server can access the old server without password by means of <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
 		</ul>
 		<h2>Typical Steps</h2>
-		<p>Apart from running the steps in this script below, there are several other steps in moving a website, here are some steps you make take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:</p>
+		<p>
+			Apart from running the steps in this script below, there are several other steps in moving a website.
+			Here are some steps you may take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:
+		</p>
 		<ol>
-			<li>create new website on new server</li>
-			<li>create mysql database on new server</li>
-			<li>setup a-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of old server</li>
-			<li>add <u>temp-old.mysite.co.nz</u> to old server's DNS</li>
-			<li>setup a-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of old server</li>
-			<li>add <u>temp-new.mysite.co.nz</u> to new server's DNS</li>
+			<li>create <u>mysite.co.nz</u> on <em>new server</em> (set up folder, host entry, etc...)</li>
+			<li>create mysql database on <em>new server</em></li>
+			<li>add <u>temp-old.mysite.co.nz</u> to the <em>old server's</em> DNS</li>
+			<li>setup A-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of <em>old server</em></li>
+			<li>add <u>temp-new.mysite.co.nz</u> to <em>new server's</em> DNS</li>
+			<li>setup A-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of <em>new server</em></li>
 			<li><strong>run this script</strong></li>
-			<li>add redirect in .htaccess of new server pointing redirecting all traffic to temp-old.mysite.co.nz (302)</li>
-			<li>update a-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of new server</li>
-			<li><em>wait a few days</em></li>
+			<li>add redirect in .htaccess file of <em>new server</em> redirecting all traffic to <u>temp-old.mysite.co.nz</u> (see example below)</li>
+			<li>update A-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of <em>new server</em></li>
+			<li> ... </li>
+			<li>wait a few days</li>
+			<li> ... </li>
 			<li><strong>run this script again</strong></li>
-			<li>remove redirect on new site back to <u>temp-old.mysite.co.nz</u></li>
-			<li>add redirect in .htaccess file on old site to <u>temp-new.mysite.co.nz</u></li>
-			<li><em>wait a few weeks</em></li>
-			<li>add DNS entry for <u>temp-old.mysite.co.nz</u> to new server</li>
-			<li>change a-record for <u>temp-old.mysite.co.nz</u> to point to new server</li>
-			<li>add redirect in .htaccess of new server to redirect <u>temp-old.mysite.co.nz</u> to mysite.co.nz</li>
-			<li>close down old server</li>
+			<li>remove redirect in .htaccess file on <em>new server</em> back to <u>temp-old.mysite.co.nz</u></li>
+			<li>add redirect in .htaccess file on <em>old server</em> to <u>temp-new.mysite.co.nz</u></li>
+			<li>add DNS entry for <u>temp-old.mysite.co.nz</u> to <em>new server</em></li>
+			<li>change A-record for <u>temp-old.mysite.co.nz</u> to point to IP of <em>new server</em></li>
+			<li>add redirect in .htaccess of <em>new server</em> to redirect <u>temp-old.mysite.co.nz</u> to <u>mysite.co.nz</u></li>
+			<li> ... </li>
+			<li>wait a few weeks</li>
+			<li> ... </li>
+			<li>close down <em>old server</em></li>
 		</ol>
 		<p>.htaccess redirections should be added as follows (change new domain names as needed):</p>
 		<pre>
