@@ -293,14 +293,14 @@ jQuery(document).ready(
 				var isDev = isLive === false ? false : true;
 				var hasNewDBPrefix = jQuery("input[id=NewDBPrefix]").val().length > 0 ? true : false;
 				var hasNewDBSuffix = jQuery("input[id=NewDBSuffix]").val().length > 0 ? true : false;
-				var oldServerHasSpecialPort = jQuery("input[id=OldSSHPort]").val() == 22 && jQuery("input[id=OldSSHPort]").val).length > 0 ? false : true;
+				var oldServerHasSpecialPort = jQuery("input[id=OldSSHPort]").val() == 22 && jQuery("input[id=OldSSHPort]").val().length > 0 ? false : true;
 				var oldServerParamsForRsync = '';
 				var oldServerSSHPortParam = '';
 				if(oldServerHasSpecialPort) {
 					oldServerParamsForRsync += "-e &quot;ssh -p [OldSSHPort]&quot;";
 					oldServerSSHPortParam += "-p [OldSSHPort]";
 				}
-				var newServerHasSpecialPort = jQuery("input[id=NewSSHPort]").val() == 22 jQuery("input[id=NewSSHPort]").val).length > 0 ? false : true;
+				var newServerHasSpecialPort = jQuery("input[id=NewSSHPort]").val() == 22 && jQuery("input[id=NewSSHPort]").val().length > 0 ? false : true;
 				var newServerParamsForRsync = '';
 				var newServerSSHPortParam = '';
 				if(newServerHasSpecialPort) {
