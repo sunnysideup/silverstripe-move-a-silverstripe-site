@@ -38,9 +38,9 @@
 
 		<p>
 			I have moved a ton of <a href="http://www.silverstripe.org/">Silverstripe Websites</a> over the years, but I still have to think about the steps every time.
-			So here is a <em>script generator</em> of sorts that helps you transfer a Silverstripe Project from one server to another server.
+			So here is a <em>script generator</em> of sorts that helps you transfer a Silverstripe website from one server to another server.
 		</p>
-		<p>By completing the details in the form below you build a command line (SSH) list of steps that you can run as a whole or line-by-line.</p>
+		<p>By completing the details in the form below you build a command line (SSH) list of steps you can copy and then paste into a bash file (after careful inspection!) to migrate your website.</p>
 		<h2>Assumptions</h2>
 		<p>The wizard assumes the following about your project:</p>
 		<ul>
@@ -49,6 +49,7 @@
 			<li>parent folder of web-root folder is writable and can be used to store files</li>
 			<li>site uses _ss_environment.php file</li>
 			<li>Mysql Database has already been created on new server</li>
+			<li>the new server can access the old server without password by means of <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
 		</ul>
 		<h2>Typical Steps</h2>
 		<p>Apart from running the steps in this script below there are several other steps in moving a website, here are some steps you make take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:</p>
@@ -92,7 +93,7 @@
 
 	<form id="WizardForm">
 		<fieldset id="TechnologiesUsed">
-			<h2>Pre-complete Option</h2>
+			<h2>General Inputs</h2>
 			<label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value=""></li>
 			<h2>Technologies Used</h2>
 			<ul class="checkboxes">
