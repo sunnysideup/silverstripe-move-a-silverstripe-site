@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)http://move-a-silverstripe-site.ssmods.com/index.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
 	<title>Transferring / Copying / Migrating / Deploying Silverstripe Websites</title>
@@ -42,6 +41,7 @@
 			So here is a <em>script generator</em> of sorts that helps you transfer a Silverstripe Project from one server to another server.
 		</p>
 		<p>By completing the details in the form below you build a command line (SSH) list of steps that you can run as a whole or line-by-line.</p>
+		<h2>Assumptions</h2>
 		<p>The wizard assumes the following about your project:</p>
 		<ul>
 			<li>SSH access to both servers</li>
@@ -50,6 +50,38 @@
 			<li>site uses _ss_environment.php file</li>
 			<li>Mysql Database has already been created on new server</li>
 		</ul>
+		<h2>Typical Steps</h2>
+		<p>Apart from running the steps in this script below there are several other steps in moving a website, here are some steps you make take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:</p>
+		<ol>
+			<li>create new website on new server</li>
+			<li>create mysql database on new server</li>
+			<li>setup a-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of old server</li>
+			<li>add <u>temp-old.mysite.co.nz</u> to old server's DNS</li>
+			<li>setup a-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of old server</li>
+			<li>add <u>temp-new.mysite.co.nz</u> to new server's DNS</li>
+			<li><strong>run this script</strong></li>
+			<li>add redirect in .htaccess of new server pointing redirecting all traffic to temp-old.mysite.co.nz (302)</li>
+			<li>update a-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of new server</li>
+			<li><em>wait a few days</em></li>
+			<li><strong>run this script again</strong></li>
+			<li>remove redirect on new site back to <u>temp-old.mysite.co.nz</u></li>
+			<li>add redirect in .htaccess file on old site to <u>temp-new.mysite.co.nz</u></li>
+			<li><em>wait a few weeks</em></li>
+			<li>add DNS entry for <u>temp-old.mysite.co.nz</u> to new server</li>
+			<li>change a-record for <u>temp-old.mysite.co.nz</u> to point to new server</li>
+			<li>add redirect in .htaccess of new server to redirect <u>temp-old.mysite.co.nz</u> to mysite.co.nz</li>
+			<li>close down old server</li>
+		</ol>
+		<p>.htaccess redirections should be added as follows (change new domain names as needed):</p>
+		<pre>
+&lt;IfModule mod_rewrite.c&gt;
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^temp-old.mysite.co.nz$ [OR]
+  RewriteCond %{HTTP_HOST} ^www.temp-old.mysite.co.nz$
+  RewriteRule (.*)$ http://www.mysite.co.nz/$1 [R=302,L]
+&lt;/IfModule&gt;
+		</pre>
+		<p><strong>do not use 301 - ever - because it does not help you much and errors are fatal!</strong></p>
 		<h2>Security</h2>
 		<p>
 			You can save this page as HTML in your browser and download it as such.
@@ -61,9 +93,7 @@
 	<form id="WizardForm">
 		<fieldset id="TechnologiesUsed">
 			<h2>Pre-complete Option</h2>
-			<ul>
-			<label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value="">
-			</ul>
+			<label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value=""></li>
 			<h2>Technologies Used</h2>
 			<ul class="checkboxes">
 				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">SSH</label></li>
@@ -119,7 +149,7 @@
 		<fieldset>
 			<h2>Versioning</h2>
 			<div class="useGITON" style="display: none;">
-				<label for="GITrepo">git repo location</label><input type="text" id="GITrepo">
+				<label for="GITRepo">ssh git repo location (e.g. git@bitbucket.org:myaccountname/mywebsite.git)</label><input type="text" id="GITRepo">
 				<label for="GITRepoTagOrBranch">git repo Tag or Branch</label><input type="text" id="GITRepoTagOrBranch" value="master">
 			</div>
 			<div class="useSVNON" style="display: none;">
@@ -165,14 +195,13 @@
 			<input type="hidden" name="action" value="checkout">
 			<input type="hidden" name="posData" value="">
 			<input type="hidden" name="data" value="PsqZZ6WX9/sGBTTFZkU9vtZq2zulKXtGrbcRiWyPws1T/STsoiqQ8KVQWfhKlD1+muzE1zP4cG82yiCM53iT8v9vBb21dfZNR/ltGOpKzfv+rNeCKjdWUJKpU6n7R3EiZQnm2qCrEmbLqon8nY+NCj3qm1f6A0DR9xDrEmEbtzG2Dq+z1+fJELnNdAY/V/pUhrWBvL8DnKDsi7uUWOMxRp8F3UYPVaob+8+xeDUpi9B4eRl2jwa9YNazP/o6J/4XxhM/0iRpWpcxfwz24+2CyQ==">
-			<input type="image" src="./index_files/button2.png" name="submit" alt="Donate now">
+			<input type="submit" name="submit" value="Donate using Bitcoins">
 		</form>
 		<h3>Donations in NZD</h3>
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
 			<input type="hidden" name="cmd" value="_s-xclick">
 			<input type="hidden" name="hosted_button_id" value="M9S3XHFBT36HG">
-			<input type="image" src="./index_files/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-			<img alt="" border="0" src="./index_files/pixel.gif" width="1" height="1">
+			<input type="submit" name="submit" value="Donate using Credit Card">
 		</form>
 
 		<h3>Notes</h3>
@@ -415,22 +444,24 @@ jQuery(document).ready(
 				 + "<p class='comment'># import database</p>"
 				 + "<p class='code'>mysql --user [NewDBUser] --password[NewDBPassword] --host [NewDBHost] [NewDBName] &lt; ../db.sql</p>"
 				 + "<p class='code'>&nbsp;</p>";
-				 if(useSVN) {
+				 if(useSVN && jQuery("input[id='SVNRepo']").val().length > 0) {
 					 originalHTML += ""
 					 + "<p class='comment'># svn repo</p>"
 					 + "<p class='code'>svn checkout [SVNRepo] .</p>"
 					 + "<p class='code'>&nbsp;</p>";
 				 }
-				 if(jQuery("input[id='GITRepo']").length == 1 && jQuery("input[id='GITRepo']").val().length > 0) {
+				 if(useGIT && jQuery("input[id='GITRepo']").val().length > 0) {
 					 originalHTML += ""
-					 + "<p class='comment'># clone git repo</p>"
-					 + "<p class='code'>git clone [GITRepo] .</p>"
+					 + "<p class='comment'># start GIT</p>"
+					 + "<p class='code'>git init .</p>"
+					 + "<p class='comment'># set up remove</p>"
+					 + "<p class='code'>git remote add origin [GITRepo]</p>"
 					 + "<p class='comment'># get all branches / tags</p>"
-					 + "<p class='code'>git fetch .</p>"
+					 + "<p class='code'>git fetch --all</p>"
 					 + "<p class='comment'># checkout tag / branch</p>"
 					 + "<p class='code'>git checkout [GITRepoTagOrBranch]</p>"
 					 + "<p class='comment'># update to latest code</p>"
-					 + "<p class='code'>git pull origin master</p>"
+					 + "<p class='code'>git pull origin [GITRepoTagOrBranch]</p>"
 					 + "<p class='code'>&nbsp;</p>"
 				 }
 				 originalHTML += ""
@@ -459,6 +490,8 @@ jQuery(document).ready(
 				 + "<p class='comment'># run it again to check for any errors:</p>"
 				 + "<p class='code'>php framework/cli-script.php dev/build flush=all</p>"
 				 + "<p class='code'>&nbsp;</p>"
+				 + "<p class='comment'># log out</p>"
+				 + "<p class='code'>ONNEWSERVER</p>"
 				 + "<p class='comment'># check for cron jobs:</p>"
 				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"Are there any cron-jobs to transfer?\" -timeout 10</p>"
 				 + "<p class='comment'># check for other tasks:</p>"
@@ -469,18 +502,19 @@ jQuery(document).ready(
 				 + "<p class='code'>&nbsp;</p>";
 
 				var html = originalHTML;
-				jQuery("form input, form select").each(
+				jQuery("form#WizardForm  input, form#WizardForm  select").each(
 					function(i, el) {
 						var name = jQuery(el).attr("id");
-						var from = "["+ name + "]";
-						var to = jQuery(el).val();
-						if(to.length == 0) {
-							to = "<span style='color: red; font-weight: bold;'>" + name + "</span>";
+						if(typeof name !== "undefined" || 1 == 1) {
+							var from = "["+ name + "]";
+							var to = jQuery(el).val();
+							if(to.length == 0) {
+								to = "<span style='color: red; font-weight: bold;'>" + name + "</span>";
+							}
+							else {
+								to = "<span style='color: green; font-weight: bold;'>" + to + "</span>";
+							}
 						}
-						else {
-							to = "<span style='color: green; font-weight: bold;'>" + to + "</span>";
-						}
-
 						console.debug(from+ " = "+ to);
 						html = html.replaceAll(from, to);
 					}
