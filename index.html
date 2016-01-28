@@ -461,7 +461,7 @@ jQuery(document).ready(
 				 + "<p class='comment'># back up existing database</p>"
 				 + "<p class='code'>mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; ../db.backup.[TimeStamp].sql</p>"
 				 + "<p class='comment'># import database</p>"
-				 + "<p class='code'>mysql --user [NewDBUser] --password[NewDBPassword] --host [NewDBHost] [NewDBName] &lt; ../db.sql</p>"
+				 + "<p class='code'>mysql --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &lt; ../db.sql</p>"
 				 + "<p class='code'>&nbsp;</p>";
 				 if(useSVN && jQuery("input[id='SVNRepo']").val().length > 0) {
 					 originalHTML += ""
