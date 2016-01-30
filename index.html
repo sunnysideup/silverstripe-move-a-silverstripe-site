@@ -19,7 +19,7 @@
 		/* special case */
 		#WizardForm  ul.checkboxes {list-style: none;}
 		#WizardForm label.checkbox {display: inline;  }
-		#WizardForm  input[type='checkbox'] {width: auto;}
+		#WizardForm  input[type='checkbox'], #WizardForm  input[type='radio'] {width: auto;}
 
 		/* output format */
 		#ToRun {max-width: 100%; border-radius: 5px; background-color: #111; border: 1px solid #555; color: #eee; padding: 0.7em; overflow: auto;}
@@ -54,73 +54,29 @@
 			<li>the new server can access the old server without password by means of <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
 			<li>to make sure it runs smoothly you need </li>
 		</ul>
+		<h2>How this works?</h2>
 		<p>
-			The script's default values and output is based on a typical <em>Ubuntu</em> server setup.
-			With a few alterations, I am sure it will also work on other flavours of linux and macs.
+			Please complete the details on the left.
+			Doing so will create a script on the right that you can copy line-by-line or, as a whole, into a bash-esque script.
+			This script will move a website from an <em>old server</em> to a <em>new server</em> in its entirety.
 		</p>
-		<h2>Typical Steps</h2>
-		<p>
-			Apart from running the steps in this script below, there are several other steps in moving a website.
-			Here are some steps you may take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:
-		</p>
-		<ol>
-			<li>create <u>mysite.co.nz</u> on <em>new server</em> (set up folder, host entry, etc...)</li>
-			<li>create mysql database on <em>new server</em></li>
-			<li>add <u>temp-old.mysite.co.nz</u> to the <em>old server's</em> DNS</li>
-			<li>setup A-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of <em>old server</em></li>
-			<li>add <u>temp-new.mysite.co.nz</u> to <em>new server's</em> DNS</li>
-			<li>setup A-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of <em>new server</em></li>
-			<li><strong>run this script</strong></li>
-			<li>add redirect in .htaccess file of <em>new server</em> redirecting all traffic to <u>temp-old.mysite.co.nz</u> (see example below)</li>
-			<li>update A-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of <em>new server</em></li>
-			<li> ... </li>
-			<li>wait a few days</li>
-			<li> ... </li>
-			<li><strong>run this script again</strong></li>
-			<li>remove redirect in .htaccess file on <em>new server</em> back to <u>temp-old.mysite.co.nz</u></li>
-			<li>add redirect in .htaccess file on <em>old server</em> to <u>temp-new.mysite.co.nz</u></li>
-			<li>add DNS entry for <u>temp-old.mysite.co.nz</u> to <em>new server</em></li>
-			<li>change A-record for <u>temp-old.mysite.co.nz</u> to point to IP of <em>new server</em></li>
-			<li>add redirect in .htaccess of <em>new server</em> to redirect <u>temp-old.mysite.co.nz</u> to <u>mysite.co.nz</u></li>
-			<li> ... </li>
-			<li>wait a few weeks</li>
-			<li> ... </li>
-			<li>close down <em>old server</em></li>
-			<li>remove A-record for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u></li>
-			<li>remove DNS for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u> one <em>new server</em></li>
-			<li>remove redirects in .htaccess file on <em>new server</em></li>
-		</ol>
-		<p>.htaccess redirections should be added as follows (change new domain names as needed):</p>
-		<pre>
-&lt;IfModule mod_rewrite.c&gt;
-  RewriteEngine On
-  RewriteCond %{HTTP_HOST} ^temp-old.mysite.co.nz$ [OR]
-  RewriteCond %{HTTP_HOST} ^www.temp-old.mysite.co.nz$
-  RewriteRule (.*)$ http://www.mysite.co.nz/$1 [R=302,L]
-&lt;/IfModule&gt;
-		</pre>
-		<p><strong>do not use 301 - ever - because it does not help you much and errors are fatal!</strong></p>
-		<p>Make sure to set the TTL for the A records changes to as low a number if possible. You can also change that prior to making real changes to that when you make the change the DNS entries around the world are updated quicker (thank you James). </p>
-		<h2>Security</h2>
-		<p>
-			You can save this page as HTML in your browser and download it as such.
-			After that turn off the internet temporarily and use the page as a stand-alone tool.
-			No data entered into the form below is transferred anywhere.
-		 </p>
+		<h2>Need help?</h2>
+		<p>If you need help upgrading or migrating Silverstripe websites then please do not hesitate to contact <a href="http://www.sunnysideup.co.nz">Sunny Side Up</a> for help. We offer competitive rates and high quality work.</p>
 	</header>
 
 	<form id="WizardForm">
 		<fieldset id="TechnologiesUsed">
 			<h2>General Inputs</h2>
 			<label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value=""></li>
-			<h2>Technologies Used</h2>
+			<h2>Settings</h2>
 			<ul class="checkboxes">
-				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">SSH</label></li>
+				<li><input id="makeBackup" type="checkbox" checked="checked"><label for="makeBackup" class="checkbox">make backups of files</label></li>
+				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">use SSH</label></li>
 				<li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
 				<li><input id="useSSHAliasOnNewServer" type="checkbox" value="1"><label for="useSSHAliasOnNewServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
-				<li><input id="useSVN" type="checkbox" value="0"><label for="useSVN" class="checkbox">SVN</label></li>
-				<li><input id="useGIT" type="checkbox" value="1"><label for="useGIT" class="checkbox">GIT</label></li>
-				<li><input id="useComposer" type="checkbox" value="1"><label for="useComposer" class="checkbox">Composer</label></li>
+				<li><input id="repoType" name="repoType" type="radio" value="GIT" checked="checked"><label for="repoType" class="checkbox">use GIT</label></li>
+				<li><input id="repoType" name="repoType" type="radio" value="SVN"><label for="repoType" class="checkbox">use SVN</label></li>
+				<li><input id="useComposer" type="checkbox" value="1"><label for="useComposer" class="checkbox">use Composer</label></li>
 				<li class="useServerComposerON" style="display: none;"><input id="useServerComposer" type="checkbox" value="1"><label for="useServerComposer" class="checkbox">Composer installed on server</label></li>
 			</ul>
 		</fieldset>
@@ -208,22 +164,54 @@
 		<h5 style="color: red">Please use the script template at your own risk!</h5>
 	</div>
 	<footer>
-		<h3>Donations in Bitcoin</h3>
-		<p>If you use this tool then please make a small donation to support this project.</p>
-		<form action="https://bitpay.com/checkout" method="post">
-			<input type="hidden" name="action" value="checkout">
-			<input type="hidden" name="posData" value="">
-			<input type="hidden" name="data" value="PsqZZ6WX9/sGBTTFZkU9vtZq2zulKXtGrbcRiWyPws1T/STsoiqQ8KVQWfhKlD1+muzE1zP4cG82yiCM53iT8v9vBb21dfZNR/ltGOpKzfv+rNeCKjdWUJKpU6n7R3EiZQnm2qCrEmbLqon8nY+NCj3qm1f6A0DR9xDrEmEbtzG2Dq+z1+fJELnNdAY/V/pUhrWBvL8DnKDsi7uUWOMxRp8F3UYPVaob+8+xeDUpi9B4eRl2jwa9YNazP/o6J/4XxhM/0iRpWpcxfwz24+2CyQ==">
-			<input type="submit" name="submit" value="Donate using Bitcoins">
-		</form>
-		<h3>Donations in NZD</h3>
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-			<input type="hidden" name="cmd" value="_s-xclick">
-			<input type="hidden" name="hosted_button_id" value="M9S3XHFBT36HG">
-			<input type="submit" name="submit" value="Donate using Credit Card">
-		</form>
-
-		<h3>Notes</h3>
+		<p>
+			The script's default values and output is based on a typical <em>Ubuntu</em> server setup.
+			With a few alterations, I am sure it will also work on other flavours of linux and macs.
+		</p>
+		<h2>More Migration Steps</h2>
+		<p>
+			Apart from running the steps in this script below, there are several other steps in moving a website.
+			Here are some steps you may take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:
+		</p>
+		<ol>
+			<li>create <u>mysite.co.nz</u> on <em>new server</em> (set up folder, host entry, etc...)</li>
+			<li>create mysql database on <em>new server</em></li>
+			<li>add <u>temp-old.mysite.co.nz</u> to the <em>old server's</em> DNS</li>
+			<li>setup A-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of <em>old server</em></li>
+			<li>add <u>temp-new.mysite.co.nz</u> to <em>new server's</em> DNS</li>
+			<li>setup A-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of <em>new server</em></li>
+			<li><strong>run this script</strong></li>
+			<li>add redirect in .htaccess file of <em>new server</em> redirecting all traffic to <u>temp-old.mysite.co.nz</u> (see example below)</li>
+			<li>update A-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of <em>new server</em></li>
+			<li> ... </li>
+			<li>wait a few days</li>
+			<li> ... </li>
+			<li><strong>run this script again</strong></li>
+			<li>remove redirect in .htaccess file on <em>new server</em> back to <u>temp-old.mysite.co.nz</u></li>
+			<li>add redirect in .htaccess file on <em>old server</em> to <u>temp-new.mysite.co.nz</u></li>
+			<li>add DNS entry for <u>temp-old.mysite.co.nz</u> to <em>new server</em></li>
+			<li>change A-record for <u>temp-old.mysite.co.nz</u> to point to IP of <em>new server</em></li>
+			<li>add redirect in .htaccess of <em>new server</em> to redirect <u>temp-old.mysite.co.nz</u> to <u>mysite.co.nz</u></li>
+			<li> ... </li>
+			<li>wait a few weeks</li>
+			<li> ... </li>
+			<li>close down <em>old server</em></li>
+			<li>remove A-record for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u></li>
+			<li>remove DNS for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u> one <em>new server</em></li>
+			<li>remove redirects in .htaccess file on <em>new server</em></li>
+		</ol>
+		<p>.htaccess redirections should be added as follows (change new domain names as needed):</p>
+		<pre>
+&lt;IfModule mod_rewrite.c&gt;
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^temp-old.mysite.co.nz$ [OR]
+  RewriteCond %{HTTP_HOST} ^www.temp-old.mysite.co.nz$
+  RewriteRule (.*)$ http://www.mysite.co.nz/$1 [R=302,L]
+&lt;/IfModule&gt;
+		</pre>
+		<p><strong>do not use 301 - ever - because it does not help you much and errors are fatal!</strong></p>
+		<p>Make sure to set the TTL for the A records changes to as low a number if possible. You can also change that prior to making real changes to that when you make the change the DNS entries around the world are updated quicker (thank you James). </p>
+		<h2>Rsync Notes</h2>
 		<p>
 			RSync:<br>
 			# c = skip based based on checksum<br>
@@ -234,9 +222,34 @@
 			# P = partial progress<br />
 			# r = recursive<br />
 			# e = SSH specifics<br />
+		</p>		
+		<h2>Security</h2>
+		<p>
+			You can save this page as HTML in your browser and download it as such.
+			After that turn off the internet temporarily and use the page as a stand-alone tool.
+			No data entered into the form below is transferred anywhere.
 		</p>
-		<h3>Feedback</h3>
-		<p>If you have any feedback then please contact migrate @ sunnysideup dot co dot nz via the interwebs.</p>
+		<h2>Donations in Bitcoin</h2>
+		<p>If you use this tool then please make a small donation to support this project.</p>
+		<form action="https://bitpay.com/checkout" method="post">
+			<input type="hidden" name="action" value="checkout" />
+			<input type="hidden" name="posData" value="" />
+			<input type="hidden" name="data" value="PsqZZ6WX9/sGBTTFZkU9vtZq2zulKXtGrbcRiWyPws1T/STsoiqQ8KVQWfhKlD1+muzE1zP4cG82yiCM53iT8v9vBb21dfZNR/ltGOpKzfv+rNeCKjdWUJKpU6n7R3EiZQnm2qCrEmbLqon8nY+NCj3qm1f6A0DR9xDrEmEbtzG2Dq+z1+fJELnNdAY/V/pUhrWBvL8DnKDsi7uUWOMxRp8F3UYPVaob+8+xeDUpi9B4eRl2jwa9YNazP/o6J/4XxhM/0iRpWpcxfwz24+2CyQ==" />
+			<input type="submit" name="submit" value="Donate using Bitcoins" />
+		</form>
+		<h2>Donations in NZD</h2>
+		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" />
+			<input type="hidden" name="cmd" value="_s-xclick" />
+			<input type="hidden" name="hosted_button_id" value="M9S3XHFBT36HG" />
+			<input type="submit" name="submit" value="Donate using Credit Card" />
+		</form>
+		<h2>Feedback</h2>
+		<p>
+			If you have any feedback then please contact migrate @ sunnysideup dot co dot nz via the interwebs.
+		</p>
+		<p>
+			You can make a pull request to improve this script on <a href="https://github.com/sunnysideup/silverstripe-move-a-silverstripe-site">github</a>.
+		</p>
 	</footer>
 <script>
 
@@ -285,8 +298,8 @@ jQuery(document).ready(
 				var useSSH = jQuery("input[id=useSSH]").is(":checked");
 				var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
 				var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
-				var useSVN = jQuery("input[id=useSVN]").is(":checked");
-				var useGIT = jQuery("input[id=useGIT]").is(":checked");
+				var useSVN = jQuery("input[name=repoType]").val() == "SVN" ? true : false;
+				var useGIT = jQuery("input[name=repoType]").val() == "GIT" ? true : false;
 				var useComposer = jQuery("input[id=useComposer]").is(":checked");
 				var useServerComposer = jQuery("input[id=useServerComposer]").is(":checked");
 				var isLive = jQuery("select[id=Environment]").val() == "live";
@@ -517,15 +530,60 @@ jQuery(document).ready(
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONNEWSERVER</p>"
-				 + "<p class='comment'># check for cron jobs:</p>"
-				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"Are there any cron-jobs to transfer?\" -timeout 10</p>"
-				 + "<p class='comment'># check for other tasks:</p>"
-				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"Are there any tasks to run?\" -timeout 10</p>"
+				 + "<p class='comment'># reminder for cron jobs:</p>"
+				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any cron-jobs to transfer?\" -timeout 10</p>"
+				 + "<p class='comment'># reminder for other tasks:</p>"
+				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any tasks to run?\" -timeout 10</p>"
+				 + "<p class='comment'># remove backup question:</p>"
+				 + "<p class='code'>removeBackup=$(xmessage -c \"Would you like to remove all backup files? \" -buttons yes,no -default no -print)</p>"
+				 + "<p class='comment'># review answer - if it is not YES then exit ...</p>"
+				 + "<p class='code'>if [ $removeBackup != \"yes\" ]</p>"
+				 + "<p class='code'>then</p>"
+				 + "<p class='comment'># show end:</p>"
+				 + "<p class='code'>echo \"-------------END ---------\"</p>"
+				 + "<p class='comment'># exit script:</p>"
+				 + "<p class='code'>exit</p>"
+				 + "<p class='comment'># end conditional:</p>"
+				 + "<p class='code'>fi</p>"
 				 + "<p class='code'>&nbsp;</p>"
+				 + "<h5># removal backup files from old server:</h5>"
+				 if(useSSHAliasOnOldServer) {
+					originalHTML += ""
+					+ "ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER";
+				 }
+				 else {
+					originalHTML += ""
+					+ "ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER";
+				 }
+				 originalHTML += ""
+				 + "<p class='comment'># go to web root</p>"
+				 + "<p class='code'>cd [OldWebRoot]</p>"
+				 + "<p class='comment'># rm database</p>"
+				 + "<p class='code'>rm ../db.sql</p>"
+				 + "<p class='comment'># log out</p>"
+				 + "<p class='code'>ONOLDSERVER</p>"
 				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='code'>&nbsp;</p>";
-
+				 + "<h5># remove backup files from new server:</h5>"
+				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
+				 + "<p class='comment'># go to web root:</p>"
+				 + "<p class='code'>cd [NewWebRoot]</p>"
+				 + "<p class='comment'># remove backup _ss_environment.php file:</p>"
+				 + "<p class='code'>rm ../_ss_environment.[TimeStamp].php</p>"
+				 + "<p class='comment'># remove assets backup:</p>"
+				 + "<p class='code'>rm assets_backup_[TimeStamp] -rf</p>"
+				 + "<p class='comment'># remove db backup from old server:</p>"
+				 + "<p class='code'>rm ../db.backup_of_db_file.[TimeStamp].sql</p>"
+				 + "<p class='comment'># remove db backup from current server:</p>"
+				 + "<p class='code'>rm ../db.backup.[TimeStamp].sql</p>"
+				 + "<p class='comment'># remove db imported:</p>"
+				 + "<p class='code'>rm ../db.sql</p>"
+				 + "<p class='comment'># remove .htaccess backup:</p>"
+				 + "<p class='code'>rm .htaccess.[TimeStamp]</p>"
+				 + "<p class='comment'># log out:</p>"
+				 + "<p class='code'>ONNEWSERVER</p>"
+				 + "<h5># remove local _ss_environment.php file:</h5>"
+				 + "<p class='code'>rm temp_ss_environment.php "
+				 + "<p class='code'>echo \"-------------END ---------\"</p>";
 				var html = originalHTML;
 				jQuery("form#WizardForm  input, form#WizardForm  select").each(
 					function(i, el) {
