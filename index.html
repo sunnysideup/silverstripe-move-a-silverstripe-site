@@ -317,7 +317,7 @@ jQuery(document).ready(
 							jQuery('input[name="' + name + '"][value="' + value + '"]').prop('checked', true);
 						}
 						else if(jQuery(el).attr("type") == "checkbox") {
-							console.debug("setting "+id+" as "+value);
+							//console.debug("setting "+id+" as "+value);
 
 							if(value == "true") {
 								jQuery(el).attr("checked", "checked");
@@ -351,7 +351,7 @@ jQuery(document).ready(
 						else {
 							var value = jQuery(this).val();
 						}
-						console.debug("saving "+id+" as "+value);
+						//console.debug("saving "+id+" as "+value);
 						localStorage.setItem(id, value);
 					}
 				}
