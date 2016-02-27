@@ -72,10 +72,19 @@
 			Safe your generated scripts in a secure place.
 			No data entered into the form below is transferred anywhere.
 		</p>
+		<p>
+			This page uses localstorage to save details.
+			You can turn this off the local storage.
+			Turning off the local storage will also delete any fields saved on your next load of the page. 
+		</p>
 	</header>
 
 	<form id="WizardForm">
 		<fieldset id="TechnologiesUsed">
+			<h2>save data</h2>
+			<ul class="checkboxes">
+				<li><input id="useLocalStorage" type="checkbox" checked="checked"><label for="useLocalStorage" class="checkbox">save values in local storage</label></li>
+			</ul>
 			<h2>General Inputs</h2>
 			<label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value=""></li>
 			<h2>Settings</h2>
@@ -296,9 +305,51 @@ jQuery(document).ready(
 				return false;
 			}
 		);
+		var useLocalStorage = localStorage.getItem("useLocalStorage") == "true" ? true : false;
+		jQuery("form input, form select").each(
+			function(i, el) {
+				var id = jQuery(el).attr("id");
+				var value = localStorage.getItem(id);
+				if(value !== null) {
+					if(useLocalStorage || id == "useLocalStorage") {
+						if(jQuery(el).attr("type") == "radio") {
+							var name = jQuery(el).attr("name");
+							jQuery('input[name="' + name + '"][value="' + value + '"]').prop('checked', true);
+						}
+						else if(jQuery(el).attr("type") == "checkbox") {
+							if(value == "true") {
+								jQuery(el).attr("checked", "checked");
+							}
+							else {
+								jQuery(el).removeAttr("checked", "checked");
+							}
+						}
+						else {
+							jQuery(el).val(value);
+						}
+					}
+					else {
+						localStorage.removeItem(id);
+					}
+				}
+			}
+		);
 		jQuery("form input, form select").on(
 			"change",
 			function() {
+				//save
+				useLocalStorage = jQuery("#useLocalStorage").is(":checked");
+				if(useLocalStorage || id == "useLocalStorage") {
+					if(jQuery(this).attr("type") == "checkbox") {
+						var value = jQuery(this).is(':checked') ? true : false;
+					}
+					else {
+						var value = jQuery(this).val();
+					}
+					var id = jQuery(this).attr("id");
+					localStorage.setItem(id, value);
+				}
+				// work out details ...
 				var useSSH = jQuery("input[id=useSSH]").is(":checked");
 				var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
 				var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
