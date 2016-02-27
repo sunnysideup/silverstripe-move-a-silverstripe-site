@@ -310,13 +310,15 @@ jQuery(document).ready(
 			function(i, el) {
 				var id = jQuery(el).attr("id");
 				var value = localStorage.getItem(id);
-				if(value !== null) {
+				if(value !== null && typeof id !== "undefined") {
 					if(useLocalStorage || id == "useLocalStorage") {
 						if(jQuery(el).attr("type") == "radio") {
 							var name = jQuery(el).attr("name");
 							jQuery('input[name="' + name + '"][value="' + value + '"]').prop('checked', true);
 						}
 						else if(jQuery(el).attr("type") == "checkbox") {
+							console.debug("setting "+id+" as "+value);
+
 							if(value == "true") {
 								jQuery(el).attr("checked", "checked");
 							}
@@ -339,15 +341,19 @@ jQuery(document).ready(
 			function() {
 				//save
 				useLocalStorage = jQuery("#useLocalStorage").is(":checked");
+				var id = jQuery(this).attr("id");
 				if(useLocalStorage || id == "useLocalStorage") {
-					if(jQuery(this).attr("type") == "checkbox") {
-						var value = jQuery(this).is(':checked') ? true : false;
+					if(typeof id !== "undefined") {
+						
+						if(jQuery(this).attr("type") == "checkbox") {
+							var value = jQuery(this).is(':checked') ? true : false;
+						}
+						else {
+							var value = jQuery(this).val();
+						}
+						console.debug("saving "+id+" as "+value);
+						localStorage.setItem(id, value);
 					}
-					else {
-						var value = jQuery(this).val();
-					}
-					var id = jQuery(this).attr("id");
-					localStorage.setItem(id, value);
 				}
 				// work out details ...
 				var useSSH = jQuery("input[id=useSSH]").is(":checked");
