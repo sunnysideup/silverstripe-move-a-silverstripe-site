@@ -508,13 +508,14 @@ jQuery(document).ready(
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># set permissions</p>";
 				 if(LinuxWebDirUser && LinuxWebDirGroup) {
-					+ "<p class='code'>sudo groupadd [LinuxWebDirGroup]</p>"
-					+ "<p class='code'>sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]</p>"
-					+ "<p class='code'>sudo chown -R root /var/www</p>"
-					+ "<p class='code'>sudo chgrp -R [LinuxWebDirGroup] /var/www</p>"
-					+ "<p class='code'>sudo chmod -R 775 /var/www</p>"
-					+ "<p class='code'>sudo chmod g+s /var/www</p>"
-					+ "<p class='code'>sudo find /var/www -name \"assets\" -type d -max-depth 2 -exec chown -R www-data \"{}\" \;</p>"
+					 originalHTML += ""
+					 + "<p class='code'>sudo groupadd [LinuxWebDirGroup]</p>"
+					 + "<p class='code'>sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]</p>"
+					 + "<p class='code'>sudo chown -R root /var/www</p>"
+					 + "<p class='code'>sudo chgrp -R [LinuxWebDirGroup] /var/www</p>"
+					 + "<p class='code'>sudo chmod -R 775 /var/www</p>"
+					 + "<p class='code'>sudo chmod g+s /var/www</p>"
+					 + "<p class='code'>sudo find /var/www -name \"assets\" -type d -max-depth 2 -exec chown -R www-data \"{}\" \;</p>"
 				 }
 				 + "<p class='comment'># backup any _ss_environment.php file:</p>"
 				 + "<p class='code'>mv ../_ss_environment.php ../_ss_environment.[TimeStamp].php</p>"
