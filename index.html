@@ -471,6 +471,7 @@ jQuery(document).ready(
 				 }
 				 originalHTML += ""
 				 + "<p class='comment'># go to web root</p>"
+				 + "<p class='code'>mkdir [OldWebRoot]</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
 				 + "<p class='comment'># dump database</p>"
 				 + "<p class='code'>mysqldump --user=[OldDBUser] --password=[OldDBPassword] --host=[OldDBHost] [OldDBName] &gt; "+oldParentFolder+"db.sql</p>"
@@ -533,6 +534,7 @@ jQuery(document).ready(
 				 originalHTML += ""
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root</p>"
+				 + "<p class='code'>mkdir [NewWebRoot]</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># set permissions</p>";
 				 if(LinuxWebDirUser && LinuxWebDirGroup) {
@@ -555,6 +557,7 @@ jQuery(document).ready(
 				 + "<h5># run more stuff on new server</h5>"
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root</p>"
+				 + "<p class='code'>mkdir [NewWebRoot]</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># change name of temp environment file</p>"
 				 + "<p class='code'>mv "+newParentFolder+"temp_ss_environment.php "+newParentFolder+"_ss_environment.php</p>"
@@ -667,6 +670,7 @@ jQuery(document).ready(
 				 }
 				 originalHTML += ""
 				 + "<p class='comment'># go to web root</p>"
+				 + "<p class='code'>mkdir [OldWebRoot]</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
 				 + "<p class='comment'># rm database</p>"
 				 + "<p class='code'>rm "+oldParentFolder+"db.sql</p>"
@@ -676,6 +680,7 @@ jQuery(document).ready(
 				 + "<h5># remove backup files from new server:</h5>"
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root:</p>"
+				 + "<p class='code'>mkdir [NewWebRoot]</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># remove backup _ss_environment.php file:</p>"
 				 + "<p class='code'>rm "+newParentFolder+"_ss_environment.[TimeStamp].php</p>"
