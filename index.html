@@ -31,6 +31,11 @@
 
 		footer {clear: both; padding-top: 3em;}
 		footer h3 {clear: both; padding-top: 3em;}
+		@media screen and (max-width: 1100px) {
+			#ToRunOuter {
+				width: 100%!important;
+			}
+		}		
 	</style>
 	<link rel="icon" type="image/png" href="http://move-a-silverstripe-site.ssmods.com/favicon.ico">
 </head>
@@ -147,7 +152,7 @@
 		<fieldset>
 			<h2>Versioning</h2>
 			<div class="useGITON" style="display: none;">
-				<label for="GITRepo">ssh git repo location (e.g. git@bitbucket.org:myaccountname/mywebsite.git)</label><input type="text" id="GITRepo">
+				<label for="GITRepo">ssh git repo location (https preferred for git)</label><input type="text" id="GITRepo">
 				<label for="GITRepoTagOrBranch">git repo Tag or Branch</label><input type="text" id="GITRepoTagOrBranch" value="master">
 			</div>
 			<div class="useSVNON" style="display: none;">
@@ -371,8 +376,8 @@ jQuery(document).ready(
 				var useGIT = jQuery("input[name=repoType]").val() == "GIT" ? true : false;
 				var useComposer = jQuery("input[id=useComposer]").is(":checked");
 				var useServerComposer = jQuery("input[id=useServerComposer]").is(":checked");
-				var isLive = jQuery("select[id=Environment]").val() == "live";
-				var isDev = isLive === false ? false : true;
+				var isLive = jQuery("#Environment").val() == "live";
+				var isDev = (isLive === false) ? true : false;
 				var hasNewDBPrefix = jQuery("input[id=NewDBPrefix]").val().length > 0 ? true : false;
 				var hasNewDBSuffix = jQuery("input[id=NewDBSuffix]").val().length > 0 ? true : false;
 				var oldServerHasSpecialPort = jQuery("input[id=OldSSHPort]").val() == 22 && jQuery("input[id=OldSSHPort]").val().length > 0 ? false : true;
@@ -492,6 +497,7 @@ jQuery(document).ready(
 				 + "<p class='code'>define('SS_DATABASE_USERNAME', '[NewDBUser]');</p>"
 				 + "<p class='code'>define('SS_DATABASE_PASSWORD', '[NewDBPassword]');</p>"
 				 if(isDev) {
+					 alert("DDDD");
 					 originalHTML += ""
 						+ "<p class='code'>define('SS_SEND_ALL_EMAILS_TO', '[CatchAllEmail]');</p>"
 				 }
