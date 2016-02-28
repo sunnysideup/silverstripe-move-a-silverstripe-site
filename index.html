@@ -91,8 +91,6 @@
 			<ul class="checkboxes">
 				<li><input id="makeBackup" type="checkbox" checked="checked"><label for="makeBackup" class="checkbox">make backups of files</label></li>
 				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">use SSH</label></li>
-				<li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
-				<li><input id="useSSHAliasOnNewServer" type="checkbox" value="1"><label for="useSSHAliasOnNewServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
 				<li><input id="repoType" name="repoType" type="radio" value="GIT" checked="checked"><label for="repoType" class="checkbox">use GIT</label></li>
 				<li><input id="repoType" name="repoType" type="radio" value="SVN"><label for="repoType" class="checkbox">use SVN</label></li>
 				<li><input id="useComposer" type="checkbox" value="1"><label for="useComposer" class="checkbox">use Composer</label></li>
@@ -102,6 +100,10 @@
 
 		<fieldset>
 			<h2>Old Server</h2>
+			<ul class="checkboxes">
+				<li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
+				<li><input id="OldCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="OldCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
+			</ul>
 			<label for="OldWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="OldWebRoot" value="">
 			<div class="useSSHAliasOnOldServerON" style="display: none;">
 				<label for="OldSSHAlias">SSH Alias</label><input type="text" id="OldSSHAlias" value="">
@@ -123,7 +125,7 @@
 
 		<fieldset>
 			<h2>New Website</h2>
-			<label for="WebsiteDomainName">website domain (with http...)</label><input type="text" id="WebsiteDomainName">
+			<label for="WebsiteDomainName">website domain (with http)</label><input type="text" id="WebsiteDomainName">
 			<label for="Environment">Environment (dev / live / test)</label><select id="Environment"><option value="dev">dev</option><option value="test">test</option><option value="live">live</option></select>
 			<label for="SSVersion">Silverstripe Installer Version (e.g. 3.1)</label><select id="SSVersion">
 				<option value="2.4">2.4</option>
@@ -156,6 +158,10 @@
 
 		<fieldset>
 			<h2>New Server</h2>
+			<ul class="checkboxes">
+				<li><input id="useSSHAliasOnNewServer" type="checkbox" value="1"><label for="useSSHAliasOnNewServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
+				<li><input id="NewCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="NewCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
+			</ul>
 			<label for="NewWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="NewWebRoot" value="/var/www/mysite.co.nz">
 			<div class="useSSHAliasOnNewServerON" style="display: none;">
 				<label for="NewSSHAlias">SSH Alias</label><input type="text" id="NewSSHAlias" value="">
@@ -432,6 +438,20 @@ jQuery(document).ready(
 				}
 				var hasLinuxWebDirUser = jQuery("#LinuxWebDirUser").val().length > 0 ? true : false;
 				var hasLinuxWebDirGroup = jQuery("#LinuxWebDirGroup").val().length > 0 ? true : false;
+				var oldCanUseParentOfRootFolder = jQuery("#OldCanUseParentOfRootFolder").is(":checked");
+				if(oldCanUseParentOfRootFolder === true) {
+					var oldParentFolder = "../";
+				}
+				else {
+					var oldParentFolder = "";
+				}
+				var newCanUseParentOfRootFolder = jQuery("#NewCanUseParentOfRootFolder").is(":checked");
+				if(newCanUseParentOfRootFolder === true) {
+					var newParentFolder = "../";
+				}
+				else {
+					var newParentFolder = "";
+				}
 				//create HTML
 				var originalHTML = "";
 				originalHTML += ""
@@ -448,7 +468,7 @@ jQuery(document).ready(
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
 				 + "<p class='comment'># dump database</p>"
-				 + "<p class='code'>mysqldump --user=[OldDBUser] --password=[OldDBPassword] --host=[OldDBHost] [OldDBName] &gt; ../db.sql</p>"
+				 + "<p class='code'>mysqldump --user=[OldDBUser] --password=[OldDBPassword] --host=[OldDBHost] [OldDBName] &gt; "+oldParentFolder+"db.sql</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONOLDSERVER</p>"
 				 + "<h5># Prepare locally</h5>"
@@ -482,9 +502,9 @@ jQuery(document).ready(
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='code'>/**</p>"
 				 + "<p class='code'>&nbsp; * Here are some useful snippets for future hacks: </p>"
-				 + "<p class='code'>&nbsp; * EXPORT DB: mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; ../db.sql</p>"
+				 + "<p class='code'>&nbsp; * EXPORT DB: mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.sql</p>"
 				 + "<p class='code'>&nbsp; * </p>"
-				 + "<p class='code'>&nbsp; * IMPORT DB: mysql --user [NewDBUser] --password[NewDBPassword] --host [NewDBHost] [NewDBName] &lt; ../db.sql</p>"
+				 + "<p class='code'>&nbsp; * IMPORT DB: mysql --user [NewDBUser] --password[NewDBPassword] --host [NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
 				 + "<p class='code'>&nbsp; *</p>"
 				 + "<p class='code'>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz [NewWebRoot]/assets/ </p>"
 				 + "<p class='code'>&nbsp; *</p>"
@@ -497,10 +517,12 @@ jQuery(document).ready(
 				 if(useSSHAliasOnNewServer) {
 					var loginOnNewServerCode = ""
 					+ "ssh [NewSSHAlias]";
+					var scpLocationNewServer = "[NewSSHAlias]";
 				 }
 				 else {
 					var loginOnNewServerCode  = ""
 					+ "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP]";
+					var scpLocationNewServer = "[NewSSHUser]@[NewIP]";
 				 }
 				 originalHTML += ""
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
@@ -519,17 +541,17 @@ jQuery(document).ready(
 				 }
 				 originalHTML += ""
 				 + "<p class='comment'># backup any _ss_environment.php file:</p>"
-				 + "<p class='code'>mv ../_ss_environment.php ../_ss_environment.[TimeStamp].php</p>"
+				 + "<p class='code'>mv "+newParentFolder+"_ss_environment.php "+newParentFolder+"_ss_environment.[TimeStamp].php</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONNEWSERVER</p>"
 				 + "<h5># copy _ss_environment.php file from local to new server</h5>"
-				 + "<p class='code'>scp temp_ss_environment.php "+loginOnNewServerCode+":[NewWebRoot]/..</p>"
+				 + "<p class='code'>scp temp_ss_environment.php "+scpLocationNewServer+":[NewWebRoot]/"+newParentFolder+"</p>"
 				 + "<h5># run more stuff on new server</h5>"
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># change name of temp environment file</p>"
-				 + "<p class='code'>mv ../temp_ss_environment.php ../_ss_environment.php</p>"
+				 + "<p class='code'>mv "+newParentFolder+"temp_ss_environment.php "+newParentFolder+"_ss_environment.php</p>"
 				 + "<p class='comment'># back up any existing assets</p>"
 				 + "<p class='code'>mv assets assets_backup_[TimeStamp]</p>"
 				 + "<p class='comment'># RSYNC assets from old server</p>"
@@ -543,26 +565,26 @@ jQuery(document).ready(
 				 }
 				 originalHTML += ""
 				 + "<p class='comment'># back up any existing db</p>"
-				 + "<p class='code'>mv ../db.sql ../db.backup_of_db_file.[TimeStamp].sql</p>"
+				 + "<p class='code'>mv "+newParentFolder+"db.sql "+newParentFolder+"db.backup_of_db_file.[TimeStamp].sql</p>"
 				 + "<p class='comment'># move db dump to new server (delete from old server)</p>";
 				 if(useSSHAliasOnOldServer) {
 					originalHTML += ""
-					+ "<p class='code'>rsync --stats --remove-source-files -chavzP [OldSSHAlias]:[OldWebRoot]/../db.sql [NewWebRoot]/../db.sql</p>";
+					+ "<p class='code'>rsync --stats --remove-source-files -chavzP [OldSSHAlias]:[OldWebRoot]/"+oldParentFolder+"db.sql [NewWebRoot]/"+newParentFolder+"db.sql</p>";
 				 }
 				 else {
 					originalHTML += ""
-					+ "<p class='code'>rsync --stats --remove-source-files -chavzP "+oldServerParamsForRsync+" [OldSSHUser]@[OldIP]:[OldWebRoot]/../db.sql [NewWebRoot]/../db.sql</p>";
+					+ "<p class='code'>rsync --stats --remove-source-files -chavzP "+oldServerParamsForRsync+" [OldSSHUser]@[OldIP]:[OldWebRoot]/"+oldParentFolder+"db.sql [NewWebRoot]/"+newParentFolder+"db.sql</p>";
 				 }
 				 originalHTML += ""
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='comment'># back up existing database</p>"
-				 + "<p class='code'>mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; ../db.backup.[TimeStamp].sql</p>"
+				 + "<p class='code'>mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
 				 + "<p class='comment'># create database if it does not exist</p>"
 				 + "<p class='code'>mysql -u root -p[NewDBPassword]</p>"
 				 + "<p class='code'>CREATE DATABASE [NewDBName];</p>"
 				 + "<p class='code'>exit</p>"
 				 + "<p class='comment'># import database</p>"
-				 + "<p class='code'>mysql --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &lt; ../db.sql</p>"
+				 + "<p class='code'>mysql --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
 				 + "<p class='code'>&nbsp;</p>";
 				 if(useSVN && jQuery("input[id='SVNRepo']").val().length > 0) {
 					 originalHTML += ""
@@ -618,7 +640,7 @@ jQuery(document).ready(
 				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any tasks to run?\" -timeout 10</p>"
 				 + "<p class='comment'># remove backup question:</p>"
 				 + "<p class='code'>removeBackup=$(xmessage -c \"Would you like to remove all backup files? \" -buttons yes,no -default no -print)</p>"
-				 + "<p class='comment'># review answer - if it is not YES then exit ...</p>"
+				 + "<p class='comment'># review answer - if it is not YES then exit</p>"
 				 + "<p class='code'>if [ $removeBackup != \"yes\" ]</p>"
 				 + "<p class='code'>then</p>"
 				 + "<p class='comment'># show end:</p>"
@@ -641,7 +663,7 @@ jQuery(document).ready(
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
 				 + "<p class='comment'># rm database</p>"
-				 + "<p class='code'>rm ../db.sql</p>"
+				 + "<p class='code'>rm "+oldParentFolder+"db.sql</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONOLDSERVER</p>"
 				 + "<p class='code'>&nbsp;</p>"
@@ -650,15 +672,15 @@ jQuery(document).ready(
 				 + "<p class='comment'># go to web root:</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># remove backup _ss_environment.php file:</p>"
-				 + "<p class='code'>rm ../_ss_environment.[TimeStamp].php</p>"
+				 + "<p class='code'>rm "+newParentFolder+"_ss_environment.[TimeStamp].php</p>"
 				 + "<p class='comment'># remove assets backup:</p>"
 				 + "<p class='code'>rm assets_backup_[TimeStamp] -rf</p>"
 				 + "<p class='comment'># remove db backup from old server:</p>"
-				 + "<p class='code'>rm ../db.backup_of_db_file.[TimeStamp].sql</p>"
+				 + "<p class='code'>rm "+newParentFolder+"db.backup_of_db_file.[TimeStamp].sql</p>"
 				 + "<p class='comment'># remove db backup from current server:</p>"
-				 + "<p class='code'>rm ../db.backup.[TimeStamp].sql</p>"
+				 + "<p class='code'>rm "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
 				 + "<p class='comment'># remove db imported:</p>"
-				 + "<p class='code'>rm ../db.sql</p>"
+				 + "<p class='code'>rm "+newParentFolder+"db.sql</p>"
 				 + "<p class='comment'># remove .htaccess backup:</p>"
 				 + "<p class='code'>rm .htaccess.[TimeStamp]</p>"
 				 + "<p class='comment'># log out:</p>"
