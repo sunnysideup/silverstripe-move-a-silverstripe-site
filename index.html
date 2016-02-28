@@ -135,6 +135,8 @@
 			</select>
 			<label for="CMSUser">default CMS User</label><input type="text" id="CMSUser">
 			<label for="CMSPassword">default CMS Password</label><input type="text" id="CMSPassword">
+			<label for="LinuxWebDirUser">Linux Web Root User (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirUser">
+			<label for="LinuxWebDirGroup">Linux Web Root Group (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirGroup">
 			<div class="isLiveON" style="display: none;">
 				<label for="CatchAllEmail">catch-all Email (send all emails to...)</label><input type="text" id="CatchAllEmail">
 			</div>
@@ -428,6 +430,9 @@ jQuery(document).ready(
 				else {
 					jQuery(".isLiveON").hide();
 				}
+				var hasLinuxWebDirUser = jQuery("#LinuxWebDirUser").val().length > 0 ? true : false;
+				var hasLinuxWebDirGroup = jQuery("#LinuxWebDirGroup").val().length > 0 ? true : false;
+				//create HTML
 				var originalHTML = "";
 				originalHTML += ""
 				 + "<h5># Run on old server</h5>";
@@ -501,12 +506,22 @@ jQuery(document).ready(
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
+				 + "<p class='comment'># set permissions</p>";
+				 if(LinuxWebDirUser && LinuxWebDirGroup) {
+					+ "<p class='code'>sudo groupadd [LinuxWebDirGroup]</p>"
+					+ "<p class='code'>sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]</p>"
+					+ "<p class='code'>sudo chown -R root /var/www</p>"
+					+ "<p class='code'>sudo chgrp -R [LinuxWebDirGroup] /var/www</p>"
+					+ "<p class='code'>sudo chmod -R 775 /var/www</p>"
+					+ "<p class='code'>sudo chmod g+s /var/www</p>"
+					+ "<p class='code'>sudo find /var/www -name \"assets\" -type d -max-depth 2 -exec chown -R www-data \"{}\" \;</p>"
+				 }
 				 + "<p class='comment'># backup any _ss_environment.php file:</p>"
 				 + "<p class='code'>mv ../_ss_environment.php ../_ss_environment.[TimeStamp].php</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONNEWSERVER</p>"
 				 + "<h5># copy _ss_environment.php file from local to new server</h5>"
-				 + "<p class='code'>scp temp_ss_environment.php "+loginOnNewServerCode+":[NewWebRoot]/../</p>"
+				 + "<p class='code'>scp temp_ss_environment.php "+loginOnNewServerCode+":[NewWebRoot]/..</p>"
 				 + "<h5># run more stuff on new server</h5>"
 				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root</p>"
@@ -540,6 +555,10 @@ jQuery(document).ready(
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='comment'># back up existing database</p>"
 				 + "<p class='code'>mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; ../db.backup.[TimeStamp].sql</p>"
+				 + "<p class='comment'># create database if it does not exist</p>"
+				 + "<p class='code'>mysql -u root -p[NewDBPassword]</p>"
+				 + "<p class='code'>CREATE DATABASE [NewDBName];</p>"
+				 + "<p class='code'>exit</p>"
 				 + "<p class='comment'># import database</p>"
 				 + "<p class='code'>mysql --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &lt; ../db.sql</p>"
 				 + "<p class='code'>&nbsp;</p>";
