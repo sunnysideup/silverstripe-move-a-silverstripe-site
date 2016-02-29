@@ -17,7 +17,7 @@
 		#WizardForm  input, #WizardForm  select {margin-bottom: 0.7em; width: 95%;}
 
 		/* special case */
-		#WizardForm  ul.checkboxes {list-style: none;}
+		#WizardForm  ul.checkboxes {list-style: none; margin-left: 0; padding-left: 0;}
 		#WizardForm label.checkbox {display: inline;  }
 		#WizardForm  input[type='checkbox'], #WizardForm  input[type='radio'] {width: auto;}
 
@@ -144,7 +144,7 @@
 			<label for="CMSPassword">default CMS Password</label><input type="text" id="CMSPassword">
 			<label for="LinuxWebDirUser">Linux Web Root User (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirUser">
 			<label for="LinuxWebDirGroup">Linux Web Root Group (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirGroup">
-			<div class="isLiveON" style="display: none;">
+			<div class="isLiveOFF" style="display: none;">
 				<label for="CatchAllEmail">catch-all Email (send all emails to...)</label><input type="text" id="CatchAllEmail">
 			</div>
 		</fieldset>
@@ -440,9 +440,11 @@ jQuery(document).ready(
 				}
 				if(isLive) {
 					jQuery(".isLiveON").show();
+					jQuery(".isLiveOFF").hide();
 				}
 				else {
 					jQuery(".isLiveON").hide();
+					jQuery(".isLiveOFF").show();
 				}
 				var hasLinuxWebDirUser = jQuery("#LinuxWebDirUser").val().length > 0 ? true : false;
 				var hasLinuxWebDirGroup = jQuery("#LinuxWebDirGroup").val().length > 0 ? true : false;
@@ -507,7 +509,7 @@ jQuery(document).ready(
 				 + "<p class='code'>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');</p>"
 				 + "<p class='code'>define('SS_DATABASE_SERVER', '[NewDBHost]');</p>"
 				 + "<p class='code'>define('SS_DATABASE_USERNAME', '[NewDBUser]');</p>"
-				 + "<p class='code'>define('SS_DATABASE_PASSWORD', '[NewDBPassword]');</p>"
+				 + "<p class='code'>define('SS_DATABASE_PASSWORD', '[NewDBPassword]');</p>";
 				 if(isDev) {
 					 originalHTML += ""
 						+ "<p class='code'>define('SS_SEND_ALL_EMAILS_TO', '[CatchAllEmail]');</p>"
