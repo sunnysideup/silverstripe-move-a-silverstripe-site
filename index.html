@@ -460,16 +460,24 @@ jQuery(document).ready(
 				//create HTML
 				var originalHTML = "";
 				originalHTML += ""
+				 + "<p class='code'>echo \"------------------------- START ------------------- \"</p>"
+				 + "<p class='code'>set -v</p>"
+				 + "<p class='code'>set -x</p>"
 				 + "<h5># Run on old server</h5>";
 				 if(useSSHAliasOnOldServer) {
-					originalHTML += ""
-					+ "ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER";
+					var loginOnOldServerCode = ""
+					+ "<p class='code'>ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER</p>"
+					+ "<p class='code'>set -v</p>"
+					+ "<p class='code'>set -x</p>";
 				 }
 				 else {
-					originalHTML += ""
-					+ "ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER";
+					var loginOnOldServerCode = ""
+					+ "<p class='code'>ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER</p>"
+					+ "<p class='code'>set -v</p>"
+					+ "<p class='code'>set -x</p>";
 				 }
 				 originalHTML += ""
+				 + loginOnOldServerCode
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>mkdir [OldWebRoot]</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
@@ -519,25 +527,28 @@ jQuery(document).ready(
 				 + "<p class='code'>&nbsp; *</p>"
 				 + "<p class='code'>&nbsp; */</p>"
 				 + "<p class='code'>\" &gt; temp_ss_environment.php"
-
-				 + "<h5># Log in to new server</h5>"
+				 + "<h5># Log in to new server</h5>";
 				 if(useSSHAliasOnNewServer) {
 					var loginOnNewServerCode = ""
-					+ "ssh [NewSSHAlias]";
+					+ "<p class='code'>ssh [NewSSHAlias] &lt;&lt;ONNEWSERVER </p>"
+					+ "<p class='code'>set -v </p>"
+					+ "<p class='code'>set -x </p>";
 					var scpLocationNewServer = "[NewSSHAlias]";
 				 }
 				 else {
 					var loginOnNewServerCode  = ""
-					+ "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP]";
+					+ "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP] &lt;&lt;ONNEWSERVER </p>"
+					+ "<p class='code'>set -v </p>"
+					+ "<p class='code'>set -x </p>";
 					var scpLocationNewServer = "[NewSSHUser]@[NewIP]";
 				 }
+				 originalHTML += loginOnNewServerCode;
 				 originalHTML += ""
-				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>mkdir [NewWebRoot]</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
 				 + "<p class='comment'># set permissions</p>";
-				 if(LinuxWebDirUser && LinuxWebDirGroup) {
+				 if(hasLinuxWebDirUser && hasLinuxWebDirGroup) {
 					 originalHTML += ""
 					 + "<p class='code'>sudo groupadd [LinuxWebDirGroup]</p>"
 					 + "<p class='code'>sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]</p>"
@@ -545,7 +556,7 @@ jQuery(document).ready(
 					 + "<p class='code'>sudo chgrp -R [LinuxWebDirGroup] /var/www</p>"
 					 + "<p class='code'>sudo chmod -R 775 /var/www</p>"
 					 + "<p class='code'>sudo chmod g+s /var/www</p>"
-					 + "<p class='code'>sudo find /var/www -name \"assets\" -type d -max-depth 2 -exec chown -R www-data \"{}\" \;</p>"
+					 + "<p class='code'>sudo find /var/www  -type d -max-depth 2 -name \"assets\" -exec chown -R www-data \"{}\" \\;</p>"
 				 }
 				 originalHTML += ""
 				 + "<p class='comment'># backup any _ss_environment.php file:</p>"
@@ -555,7 +566,7 @@ jQuery(document).ready(
 				 + "<h5># copy _ss_environment.php file from local to new server</h5>"
 				 + "<p class='code'>scp temp_ss_environment.php "+scpLocationNewServer+":[NewWebRoot]/"+newParentFolder+"</p>"
 				 + "<h5># run more stuff on new server</h5>"
-				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
+				 + loginOnNewServerCode
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>mkdir [NewWebRoot]</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
@@ -589,9 +600,7 @@ jQuery(document).ready(
 				 + "<p class='comment'># back up existing database</p>"
 				 + "<p class='code'>mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
 				 + "<p class='comment'># create database if it does not exist</p>"
-				 + "<p class='code'>mysql -u root -p[NewDBPassword]</p>"
-				 + "<p class='code'>CREATE DATABASE [NewDBName];</p>"
-				 + "<p class='code'>exit</p>"
+				 + "<p class='code'>mysql -u root -p[NewDBPassword] -e 'CREATE DATABASE [NewDBName];'</p>"
 				 + "<p class='comment'># import database</p>"
 				 + "<p class='code'>mysql --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
 				 + "<p class='code'>&nbsp;</p>";
@@ -640,6 +649,7 @@ jQuery(document).ready(
 				 + "<p class='code'>php " + frameworkVersion + "/cli-script.php dev/build flush=all</p>"
 				 + "<p class='comment'># run it again to check for any errors:</p>"
 				 + "<p class='code'>php " + frameworkVersion + "/cli-script.php dev/build flush=all</p>"
+				 + "<p class='code'>chown assets -R www-data \"{}\" \\;</p>"
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONNEWSERVER</p>"
@@ -660,15 +670,7 @@ jQuery(document).ready(
 				 + "<p class='code'>fi</p>"
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<h5># removal backup files from old server:</h5>"
-				 if(useSSHAliasOnOldServer) {
-					originalHTML += ""
-					+ "ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER";
-				 }
-				 else {
-					originalHTML += ""
-					+ "ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER";
-				 }
-				 originalHTML += ""
+				 + loginOnOldServerCode
 				 + "<p class='comment'># go to web root</p>"
 				 + "<p class='code'>mkdir [OldWebRoot]</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
@@ -678,7 +680,7 @@ jQuery(document).ready(
 				 + "<p class='code'>ONOLDSERVER</p>"
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<h5># remove backup files from new server:</h5>"
-				 + "<p class='code'>"+loginOnNewServerCode+"  &lt;&lt;ONNEWSERVER</p>"
+				 + loginOnNewServerCode
 				 + "<p class='comment'># go to web root:</p>"
 				 + "<p class='code'>mkdir [NewWebRoot]</p>"
 				 + "<p class='code'>cd [NewWebRoot]</p>"
