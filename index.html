@@ -254,7 +254,8 @@
 			# P = partial progress<br />
 			# r = recursive<br />
 			# e = SSH specifics<br />
-		</p>		
+		</p>
+		<!--	
 		<h2>Donations in Bitcoin</h2>
 		<p>If you use this tool then please make a small donation to support this project.</p>
 		<form action="https://bitpay.com/checkout" method="post">
@@ -263,7 +264,8 @@
 			<input type="hidden" name="data" value="PsqZZ6WX9/sGBTTFZkU9vtZq2zulKXtGrbcRiWyPws1T/STsoiqQ8KVQWfhKlD1+muzE1zP4cG82yiCM53iT8v9vBb21dfZNR/ltGOpKzfv+rNeCKjdWUJKpU6n7R3EiZQnm2qCrEmbLqon8nY+NCj3qm1f6A0DR9xDrEmEbtzG2Dq+z1+fJELnNdAY/V/pUhrWBvL8DnKDsi7uUWOMxRp8F3UYPVaob+8+xeDUpi9B4eRl2jwa9YNazP/o6J/4XxhM/0iRpWpcxfwz24+2CyQ==" />
 			<input type="submit" name="submit" value="Donate using Bitcoins" />
 		</form>
-		<h2>Donations in NZD</h2>
+		-->
+		<h2>Donations</h2>
 		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" />
 			<input type="hidden" name="cmd" value="_s-xclick" />
 			<input type="hidden" name="hosted_button_id" value="M9S3XHFBT36HG" />
@@ -372,8 +374,9 @@ jQuery(document).ready(
 				var useSSH = jQuery("input[id=useSSH]").is(":checked");
 				var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
 				var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
-				var useSVN = jQuery("input[name=repoType]").val() == "SVN" ? true : false;
-				var useGIT = jQuery("input[name=repoType]").val() == "GIT" ? true : false;
+				var repoType = jQuery("input[name=repoType]:checked").val();
+				var useSVN = repoType == "SVN" ? true : false;
+				var useGIT = repoType == "GIT" ? true : false;
 				var useComposer = jQuery("input[id=useComposer]").is(":checked");
 				var useServerComposer = jQuery("input[id=useServerComposer]").is(":checked");
 				var isLive = jQuery("#Environment").val() == "live";
@@ -647,8 +650,9 @@ jQuery(document).ready(
 				 + "<p class='comment'># run dev/build:</p>"
 				 + "<p class='code'>php " + frameworkVersion + "/cli-script.php dev/build flush=all</p>"
 				 + "<p class='comment'># run it again to check for any errors:</p>"
+				 + "<p class='code'>mkdir assets</p>"
 				 + "<p class='code'>php " + frameworkVersion + "/cli-script.php dev/build flush=all</p>"
-				 + "<p class='code'>chown assets -R www-data \"{}\" \\;</p>"
+				 + "<p class='code'>chown assets -R www-data</p>"
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONNEWSERVER</p>"
