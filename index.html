@@ -106,7 +106,7 @@
 		<fieldset>
 			<h2>Old Server</h2>
 			<ul class="checkboxes">
-				<li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
+				<li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
 				<li><input id="OldCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="OldCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
 			</ul>
 			<label for="OldWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="OldWebRoot" value="">
@@ -142,8 +142,6 @@
 			</select>
 			<label for="CMSUser">default CMS User</label><input type="text" id="CMSUser">
 			<label for="CMSPassword">default CMS Password</label><input type="text" id="CMSPassword">
-			<label for="LinuxWebDirUser">Linux Web Root User (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirUser">
-			<label for="LinuxWebDirGroup">Linux Web Root Group (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirGroup">
 			<div class="isLiveOFF" style="display: none;">
 				<label for="CatchAllEmail">catch-all Email (send all emails to...)</label><input type="text" id="CatchAllEmail">
 			</div>
@@ -176,6 +174,8 @@
 				<label for="NewIP">IP address</label><input type="text" id="NewIP" value="">
 				<label for="NewSSHPort">SSH Port</label><input type="text" id="NewSSHPort" value="22">
 			</div>
+			<label for="LinuxWebDirUser">Linux Web Root User (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirUser">
+			<label for="LinuxWebDirGroup">Linux Web Root Group (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirGroup">
 		</fieldset>
 
 		<fieldset>
