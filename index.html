@@ -95,6 +95,7 @@
 			<h2>Settings</h2>
 			<ul class="checkboxes">
 				<li><input id="makeBackup" type="checkbox" checked="checked"><label for="makeBackup" class="checkbox">make backups of files</label></li>
+				<li><input id="runVerbose" type="checkbox" checked="checked"><label for="runVerbose" class="checkbox">run script in verbose mode</label></li>
 				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">use SSH</label></li>
 				<li><input id="repoType" name="repoType" type="radio" value="GIT" checked="checked"><label for="repoType" class="checkbox">use GIT</label></li>
 				<li><input id="repoType" name="repoType" type="radio" value="SVN"><label for="repoType" class="checkbox">use SVN</label></li>
@@ -372,6 +373,7 @@ jQuery(document).ready(
 				}
 				// work out details ...
 				var useSSH = jQuery("input[id=useSSH]").is(":checked");
+				var runVerbose = jQuery("input[id=runVerbose]").is(":checked");
 				var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
 				var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
 				var repoType = jQuery("input[name=repoType]:checked").val();
@@ -465,21 +467,27 @@ jQuery(document).ready(
 				//create HTML
 				var originalHTML = "";
 				originalHTML += ""
-				 + "<p class='code'>echo \"------------------------- START ------------------- \"</p>"
-				 + "<p class='code'>set -v</p>"
-				 + "<p class='code'>set -x</p>"
+				 + "<p class='code'>echo \"------------------------- START ------------------- \"</p>";
+				 if(runVerbose) {
+					 originalHTML += ""
+					 + "<p class='code'>set -v</p>"
+					 + "<p class='code'>set -x</p>";
+				 }
+				 originalHTML += ""
 				 + "<h5># Run on old server</h5>";
 				 if(useSSHAliasOnOldServer) {
 					var loginOnOldServerCode = ""
-					+ "<p class='code'>ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER</p>"
-					+ "<p class='code'>set -v</p>"
-					+ "<p class='code'>set -x</p>";
+					+ "<p class='code'>ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER</p>";
 				 }
 				 else {
 					var loginOnOldServerCode = ""
-					+ "<p class='code'>ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER</p>"
-					+ "<p class='code'>set -v</p>"
-					+ "<p class='code'>set -x</p>";
+					+ "<p class='code'>ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER</p>";
+
+				 }
+				 if(runVerbose) {
+					 loginOnOldServerCode += ""
+					 + "<p class='code'>set -v</p>"
+					 + "<p class='code'>set -x</p>";
 				 }
 				 originalHTML += ""
 				 + loginOnOldServerCode
@@ -534,18 +542,19 @@ jQuery(document).ready(
 				 + "<h5># Log in to new server</h5>";
 				 if(useSSHAliasOnNewServer) {
 					var loginOnNewServerCode = ""
-					+ "<p class='code'>ssh [NewSSHAlias] &lt;&lt;ONNEWSERVER </p>"
-					+ "<p class='code'>set -v </p>"
-					+ "<p class='code'>set -x </p>";
+					+ "<p class='code'>ssh [NewSSHAlias] &lt;&lt;ONNEWSERVER </p>";
 					var scpLocationNewServer = "[NewSSHAlias]";
 				 }
 				 else {
 					var loginOnNewServerCode  = ""
-					+ "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP] &lt;&lt;ONNEWSERVER </p>"
-					+ "<p class='code'>set -v </p>"
-					+ "<p class='code'>set -x </p>";
+					+ "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP] &lt;&lt;ONNEWSERVER </p>";
 					var scpLocationNewServer = "[NewSSHUser]@[NewIP]";
 				 }
+				 if(runVerbose) {
+					 loginOnNewServerCode += ""
+					 + "<p class='code'>set -v</p>"
+					 + "<p class='code'>set -x</p>";
+				 }				 
 				 originalHTML += loginOnNewServerCode;
 				 originalHTML += ""
 				 + "<p class='comment'># go to web root</p>"
