@@ -35,7 +35,7 @@
 			#ToRunOuter {
 				width: 100%!important;
 			}
-		}		
+		}
 	</style>
 	<link rel="icon" type="image/png" href="http://move-a-silverstripe-site.ssmods.com/favicon.ico">
 </head>
@@ -80,7 +80,7 @@
 		<p>
 			This page uses localstorage to save details.
 			You can turn off the local storage using a checkbox below.
-			Turning off the local storage, on your next load of this page (CTRL+R), all saved data will be removed. 
+			Turning off the local storage, on your next load of this page (CTRL+R), all saved data will be removed.
 		</p>
 	</header>
 
@@ -192,7 +192,7 @@
 
 
 	<div id="ToRunOuter">
-		<div id="ToRun"><h5># Log in to old server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span><h5># Run on old server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># dump database</p>mysqldump --user=<span style="color: red; font-weight: bold;">OldDBUser</span> --password=<span style="color: red; font-weight: bold;">OldDBPassword</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">OldDBName</span> &gt; ../db.sql<p class="comment"># log out</p>exit<br><br><h5># Log in to new server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">NewSSHUser</span>@<span style="color: red; font-weight: bold;">NewIP</span><br><br><h5># Run on new server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># back up any existing assets</p>mv assets assets_backup_1442444305646<p class="comment"># RSYNC assets from old server</p>rsync --stats -chavzPr "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/<p class="comment"># back up any existing db</p>mv ../db.sql ../db.backup_of_db_file.1442444305646.sql<p class="comment"># move db dump to new server (delete from old server)</p>rsync --stats --remove-source-files -chavzP "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql<br><p class="comment"># back up existing database</p>mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> --password=<span style="color: red; font-weight: bold;">NewDBPassword</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.backup.1442444305646.sql<p class="comment"># import database</p>mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br><p class="comment"># backup any existing .htaccess:</p>mv .htaccess .htaccess.1442444305646<p class="comment"># download latest .htaccess version:</p>wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/<span style="color: green; font-weight: bold;">3.1</span>/.htaccess -O .htaccess<br><p class="comment"># backup any _ss_environment.php file:</p>mv ../_ss_environment.php ../_ss_environment.1442444305646.php<p class="comment"># create ss environment file:</p>echo "&lt;?php<br><br>define('SS_ENVIRONMENT_TYPE', '<span style="color: green; font-weight: bold;">dev</span>');<br>define('SS_DEFAULT_ADMIN_USERNAME', '<span style="color: red; font-weight: bold;">CMSUser</span>');<br>define('SS_DEFAULT_ADMIN_PASSWORD', '<span style="color: red; font-weight: bold;">CMSPassword</span>');<br><br>define('SS_DATABASE_PREFIX', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');<br>define('SS_DATABASE_SERVER', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_USERNAME', '<span style="color: red; font-weight: bold;">NewDBUser</span>');<br>define('SS_DATABASE_PASSWORD', '<span style="color: red; font-weight: bold;">NewDBPassword</span>');<br><br>global $_FILE_TO_URL_MAPPING; $_FILE_TO_URL_MAPPING['<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>'] = '<span style="color: red; font-weight: bold;">WebsiteDomainName</span>';<br><br>/**<br>&nbsp; * Here are some useful snippets for future hacks: <br>&nbsp; * EXPORT DB: mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> --password=<span style="color: red; font-weight: bold;">NewDBPassword</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.sql<br>&nbsp; * <br>&nbsp; * IMPORT DB: mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br>&nbsp; *<br>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <br>&nbsp; *<br>&nbsp; *<br>&nbsp; *<br>&nbsp; */<br>" &gt; ../_ss_environment.php<br><p class="comment"># run dev/build:</p>php framework/cli-script.php dev/build flush=all<p class="comment"># run it again to check for any errors:</p>php framework/cli-script.php dev/build flush=all<br><p class="comment"># check for cron jobs:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any cron-jobs to transfer?" -timeout 10<p class="comment"># check for other tasks:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any tasks to run?" -timeout 10<br><br><br><br></div>
+		<div id="ToRun"><h5># Log in to old server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span><h5># Run on old server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># dump database</p>mysqldump --user=<span style="color: red; font-weight: bold;">OldDBUser</span> -p=<span style="color: red; font-weight: bold;">'OldDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">OldDBName</span> &gt; ../db.sql<p class="comment"># log out</p>exit<br><br><h5># Log in to new server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">NewSSHUser</span>@<span style="color: red; font-weight: bold;">NewIP</span><br><br><h5># Run on new server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># back up any existing assets</p>mv assets assets_backup_1442444305646<p class="comment"># RSYNC assets from old server</p>rsync --stats -chavzPr "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/<p class="comment"># back up any existing db</p>mv ../db.sql ../db.backup_of_db_file.1442444305646.sql<p class="comment"># move db dump to new server (delete from old server)</p>rsync --stats --remove-source-files -chavzP "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql<br><p class="comment"># back up existing database</p>mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.backup.1442444305646.sql<p class="comment"># import database</p>mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br><p class="comment"># backup any existing .htaccess:</p>mv .htaccess .htaccess.1442444305646<p class="comment"># download latest .htaccess version:</p>wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/<span style="color: green; font-weight: bold;">3.1</span>/.htaccess -O .htaccess<br><p class="comment"># backup any _ss_environment.php file:</p>mv ../_ss_environment.php ../_ss_environment.1442444305646.php<p class="comment"># create ss environment file:</p>echo "&lt;?php<br><br>define('SS_ENVIRONMENT_TYPE', '<span style="color: green; font-weight: bold;">dev</span>');<br>define('SS_DEFAULT_ADMIN_USERNAME', '<span style="color: red; font-weight: bold;">CMSUser</span>');<br>define('SS_DEFAULT_ADMIN_PASSWORD', '<span style="color: red; font-weight: bold;">CMSPassword</span>');<br><br>define('SS_DATABASE_PREFIX', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');<br>define('SS_DATABASE_SERVER', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_USERNAME', '<span style="color: red; font-weight: bold;">NewDBUser</span>');<br>define('SS_DATABASE_PASSWORD', '<span style="color: red; font-weight: bold;">NewDBPassword</span>');<br><br>global $_FILE_TO_URL_MAPPING; $_FILE_TO_URL_MAPPING['<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>'] = '<span style="color: red; font-weight: bold;">WebsiteDomainName</span>';<br><br>/**<br>&nbsp; * Here are some useful snippets for future hacks: <br>&nbsp; * EXPORT DB: mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p=<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.sql<br>&nbsp; * <br>&nbsp; * IMPORT DB: mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br>&nbsp; *<br>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <br>&nbsp; *<br>&nbsp; *<br>&nbsp; *<br>&nbsp; */<br>" &gt; ../_ss_environment.php<br><p class="comment"># run dev/build:</p>php framework/cli-script.php dev/build flush=all<p class="comment"># run it again to check for any errors:</p>php framework/cli-script.php dev/build flush=all<br><p class="comment"># check for cron jobs:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any cron-jobs to transfer?" -timeout 10<p class="comment"># check for other tasks:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any tasks to run?" -timeout 10<br><br><br><br></div>
 		<p><a href="http://move-a-silverstripe-site.ssmods.com/index.html#" id="CopyToClipBoard">copy to clipboard ...</a></p>
 		<h5 style="color: red">Please use the script template at your own risk!</h5>
 	</div>
@@ -256,7 +256,7 @@
 			# r = recursive<br />
 			# e = SSH specifics<br />
 		</p>
-		<!--	
+		<!--
 		<h2>Donations in Bitcoin</h2>
 		<p>If you use this tool then please make a small donation to support this project.</p>
 		<form action="https://bitpay.com/checkout" method="post">
@@ -360,7 +360,7 @@ jQuery(document).ready(
 				var id = jQuery(this).attr("id");
 				if(useLocalStorage || id == "useLocalStorage") {
 					if(typeof id !== "undefined") {
-						
+
 						if(jQuery(this).attr("type") == "checkbox") {
 							var value = jQuery(this).is(':checked') ? true : false;
 						}
@@ -495,7 +495,7 @@ jQuery(document).ready(
 				 + "<p class='code'>mkdir [OldWebRoot]</p>"
 				 + "<p class='code'>cd [OldWebRoot]</p>"
 				 + "<p class='comment'># dump database</p>"
-				 + "<p class='code'>mysqldump --user=[OldDBUser] --password=[OldDBPassword] --host=[OldDBHost] [OldDBName] &gt; "+oldParentFolder+"db.sql</p>"
+				 + "<p class='code'>mysqldump --user=[OldDBUser] -p'[OldDBPassword]' --host=[OldDBHost] [OldDBName] &gt; "+oldParentFolder+"db.sql</p>"
 				 + "<p class='comment'># log out</p>"
 				 + "<p class='code'>ONOLDSERVER</p>"
 				 + "<h5># Prepare locally</h5>"
@@ -554,7 +554,7 @@ jQuery(document).ready(
 					 loginOnNewServerCode += ""
 					 + "<p class='code'>set -v</p>"
 					 + "<p class='code'>set -x</p>";
-				 }				 
+				 }
 				 originalHTML += loginOnNewServerCode;
 				 originalHTML += ""
 				 + "<p class='comment'># go to web root</p>"
@@ -563,13 +563,20 @@ jQuery(document).ready(
 				 + "<p class='comment'># set permissions</p>";
 				 if(hasLinuxWebDirUser && hasLinuxWebDirGroup) {
 					 originalHTML += ""
+					 + "<p class='comment'>#create new group: [LinuxWebDirGroup]</p>"
 					 + "<p class='code'>sudo groupadd [LinuxWebDirGroup]</p>"
+					 + "<p class='comment'>#add root to that group</p>"
 					 + "<p class='code'>sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]</p>"
+					 + "<p class='comment'>#make root the owner of the site</p>"
 					 + "<p class='code'>sudo chown -R root [NewWebRoot]</p>"
+					 + "<p class='comment'>#change the group owner to [LinuxWebDirGroup]</p>"
 					 + "<p class='code'>sudo chgrp -R [LinuxWebDirGroup] [NewWebRoot]</p>"
+					 + "<p class='comment'>#set the ownership level to 775 for the website</p>"
 					 + "<p class='code'>sudo chmod -R 775 [NewWebRoot]</p>"
+					 + "<p class='comment'>#the group stays intact for all files/folders created within the parent directory</p>"
 					 + "<p class='code'>sudo chmod g+s [NewWebRoot]</p>"
-					 + "<p class='code'>sudo find [NewWebRoot] -type d -max-depth 2 -name \"assets\" -exec chown -R www-data \"{}\" \\;</p>"
+					 + "<p class='comment'>#allow www-data to change the asset folder only</p>"
+					 + "<p class='code'>sudo  chown -R www-data [NewWebRoot]/assets/</p>"
 				 }
 				 originalHTML += ""
 				 + "<p class='comment'># backup any _ss_environment.php file:</p>"
@@ -611,11 +618,11 @@ jQuery(document).ready(
 				 originalHTML += ""
 				 + "<p class='code'>&nbsp;</p>"
 				 + "<p class='comment'># back up existing database</p>"
-				 + "<p class='code'>mysqldump --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
+				 + "<p class='code'>mysqldump --user=[NewDBUser] -p'[NewDBPassword]' --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
 				 + "<p class='comment'># create database if it does not exist</p>"
 				 + "<p class='code'>mysql -u root -p[NewDBPassword] -e 'CREATE DATABASE [NewDBName];'</p>"
 				 + "<p class='comment'># import database</p>"
-				 + "<p class='code'>mysql --user=[NewDBUser] --password=[NewDBPassword] --host=[NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
+				 + "<p class='code'>mysql --user=[NewDBUser] -p'[NewDBPassword]' --host=[NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
 				 + "<p class='code'>&nbsp;</p>";
 				 if(useSVN && jQuery("input[id='SVNRepo']").val().length > 0) {
 					 originalHTML += ""
