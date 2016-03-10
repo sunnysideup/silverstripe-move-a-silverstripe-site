@@ -97,6 +97,8 @@
 				<li><input id="makeBackup" type="checkbox" checked="checked"><label for="makeBackup" class="checkbox">make backups of files</label></li>
 				<li><input id="runVerbose" type="checkbox" checked="checked"><label for="runVerbose" class="checkbox">run script in verbose mode</label></li>
 				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">use SSH</label></li>
+				<li><input id="newServerCanAccessOldServer" type="checkbox" checked="checked"><label for="newServerCanAccessOldServer" class="checkbox">new server can access old server through SSH methods specified below?</label></li>
+				<li><input id="newServerHasReadRightsToVersioningRepository" type="checkbox" checked="checked"><label for="newServerHasReadRightsToVersioningRepository" class="checkbox">new server can read code repository?</label></li>
 				<li><input id="repoType" name="repoType" type="radio" value="GIT" checked="checked"><label for="repoType" class="checkbox">use GIT</label></li>
 				<li><input id="repoType" name="repoType" type="radio" value="SVN"><label for="repoType" class="checkbox">use SVN</label></li>
 				<li><input id="useComposer" type="checkbox" value="1"><label for="useComposer" class="checkbox">use Composer</label></li>
@@ -373,6 +375,8 @@ jQuery(document).ready(
 				}
 				// work out details ...
 				var useSSH = jQuery("input[id=useSSH]").is(":checked");
+				var newServerCanAccessOldServer = jQuery("input[id=newServerCanAccessOldServer]").is(":checked");
+				var newServerHasReadRightsToVersioningRepository = jQuery("input[id=newServerHasReadRightsToVersioningRepository]").is(":checked");
 				var runVerbose = jQuery("input[id=runVerbose]").is(":checked");
 				var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
 				var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
@@ -405,6 +409,12 @@ jQuery(document).ready(
 				}
 				if(!useSSH) {
 					alert("This tool is only of use if you have SSH enabled.");
+				}
+				if(!newServerCanAccessOldServer) {
+					alert("This tool works best if your new server can access your old server through SSH.  If you prefer for the old server to access the new server to move data then you have to change some of the RSYNC methods around.");
+				}
+				if(!newServerHasReadRightsToVersioningRepository) {
+					alert("This tool only works if the new server can read your versioned repository (GIT / SVN)");
 				}
 				if(useSSHAliasOnOldServer) {
 					jQuery(".useSSHAliasOnOldServerON").show();
@@ -468,10 +478,6 @@ jQuery(document).ready(
 				var originalHTML = "";
 				originalHTML += ""
 				 + "<p class='code'>echo \"------------------------- START ------------------- \"</p>";
-				 + "<p class='comment'># reminder for cron jobs:</p>"
-				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: can the old server access the new server?\" -timeout 10</p>"
-				 + "<p class='comment'># reminder for other tasks:</p>"
-				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: does the new server have access to the git repository?\" -timeout 10</p>"
 				 if(runVerbose) {
 					 originalHTML += ""
 					 + "<p class='code'>set -v</p>"
@@ -749,6 +755,8 @@ jQuery(document).ready(
 			}
 		);
 		jQuery("#useSSH").change();
+		jQuery("#newServerCanAccessOldServer").change();
+		jQuery("#newServerHasReadRightsToVersioningRepository").change();
 	}
 );
 
