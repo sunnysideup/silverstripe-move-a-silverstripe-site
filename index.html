@@ -151,7 +151,7 @@
 		<fieldset>
 			<h2>Versioning</h2>
 			<div class="useGITON" style="display: none;">
-				<label for="GITRepo">ssh git repo location (https preferred for git)</label><input type="text" id="GITRepo">
+				<label for="GITRepo">ssh git repo location (github prefers https / bitbucket prefers ssh)</label><input type="text" id="GITRepo">
 				<label for="GITRepoTagOrBranch">git repo Tag or Branch</label><input type="text" id="GITRepoTagOrBranch" value="master">
 			</div>
 			<div class="useSVNON" style="display: none;">
@@ -468,6 +468,10 @@ jQuery(document).ready(
 				var originalHTML = "";
 				originalHTML += ""
 				 + "<p class='code'>echo \"------------------------- START ------------------- \"</p>";
+				 + "<p class='comment'># reminder for cron jobs:</p>"
+				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: can the old server access the new server?\" -timeout 10</p>"
+				 + "<p class='comment'># reminder for other tasks:</p>"
+				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: does the new server have access to the git repository?\" -timeout 10</p>"
 				 if(runVerbose) {
 					 originalHTML += ""
 					 + "<p class='code'>set -v</p>"
