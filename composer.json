@@ -1,15 +1,24 @@
 {
-	"name": "sunnysideup/move-a-silverstripe-site",
-	"type": "silverstripe-module",
-	"description": "Tool to help you to move a Silverstripe site from one place to another.",
-	"keywords": ["silverstripe", "move a site", "cron", "ftp", "ssh", "mysql", "move", "migrate", "deploy"],
-	"license": "Sunny Side Up (BSD-3-Clause and CUSTOM)",
-	"authors":[
-		{
-			"name": "Nicolaas Francken",
-			"homepage": "https://github.com/sunnysideup",
-			"email" : "modules@sunnysideup.co.nz",
-			"role" : "lead developer"
-		}
-	]
+    "name": "sunnysideup/move-a-silverstripe-site",
+    "type": "silverstripe-module",
+    "description": "Tool to help you to move a Silverstripe site from one place to another.",
+    "keywords": [
+        "silverstripe",
+        "move a site",
+        "cron",
+        "ftp",
+        "ssh",
+        "mysql",
+        "move",
+        "migrate",
+        "deploy"
+    ],
+    "license": "Sunny Side Up (BSD-3-Clause and CUSTOM)",
+    "authors": [
+        {
+            "name": "Nicolaas Francken",
+            "email": "modules@sunnysideup.co.nz",
+            "role": "lead developer"
+        }
+    ]
 }
