@@ -3,7 +3,9 @@
     "type": "silverstripe-module",
     "description": "Tool to help you to move a Silverstripe site from one place to another.",
     "keywords": [
-        "silverstripe",
+        "Silverstripe-CMS",
+        "CMS",
+        "Silverstripe",
         "move a site",
         "cron",
         "ftp",
@@ -20,5 +22,9 @@
             "email": "modules@sunnysideup.co.nz",
             "role": "lead developer"
         }
-    ]
+    ],
+    "require": {
+        "silverstripe/framework": "~3.1",
+        "silverstripe/cms": "~3.1"
+    }
 }
