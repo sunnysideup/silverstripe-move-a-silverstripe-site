@@ -1,30 +1,72 @@
-Silverstripe Website Mover
-===============================================
+# Silverstripe move a site module
+[![Build Status](https://travis-ci.org/sunnysideup/silverstripe-move-a-site.svg?branch=master)](https://travis-ci.org/sunnysideup/silverstripe-move-a-site)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunnysideup/silverstripe-move-a-site/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunnysideup/silverstripe-move-a-site/?branch=master)
+[![codecov.io](https://codecov.io/github/sunnysideup/silverstripe-move-a-site/coverage.svg?branch=master)](https://codecov.io/github/sunnysideup/silverstripe-move-a-site?branch=master)
+![helpfulrobot](https://helpfulrobot.io/sunnysideup/move-a-site/badge)
 
-Tool to help you move a Silverstripe Website
-from one server to another.
-
-Developer
------------------------------------------------
-Nicolaas Francken [at] sunnysideup.co.nz
-
-
-Requirements
------------------------------------------------
-see composer.json
+[![Latest Stable Version](https://poser.pugx.org/sunnysideup/move-a-site/version)](https://packagist.org/packages/sunnysideup/move-a-site)
+[![License](https://poser.pugx.org/sunnysideup/move-a-site/license)](https://packagist.org/packages/sunnysideup/move-a-site)
+[![Monthly Downloads](https://poser.pugx.org/sunnysideup/move-a-site/d/monthly)](https://packagist.org/packages/sunnysideup/move-a-site)
 
 
-Documentation
------------------------------------------------
-Please contact author for more details.
-
-Any bug reports and/or feature requests will be
-looked at in detail.
-
-We are also very happy to provide personalised support
-for this module in exchange for a small donation.
+## Documentation
 
 
-Installation Instructions
------------------------------------------------
-Just use the stand-alone HTML as you see fit.
+
+ * [Developer Docs](docs/en/INDEX.md)
+ * [User Guide](docs/en/userguide.md)
+ * [API](http://ssmods.com/apis/move-a-site/docs/en/api/)
+
+## Requirements
+
+
+
+see [composer.json](composer.json) for details
+
+### Suggested Modules
+
+
+
+see [composer.json](composer.json) for details
+
+
+## Installation
+
+
+```
+composer require sunnysideup/move-a-site
+```
+
+### Configuration
+
+
+
+In the `_config` folder you will find the `move-a-site.yml.example`
+file that shows options for the configuration of this module.
+
+We recommend that you:
+
+  1. copy these `move-a-site.yml.example` files into your
+`mysite/_config` folder
+  2. remove the .example extension
+  3. delete the lines you not care about, and
+  4. adjust the configurations that you would like to use.
+
+
+## Contributing
+
+
+
+We welcome any contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+## Paid assistance
+
+
+
+You can pay us to create an improved / adapted version of this module for your own projects.  Please contact us if you like to find out more: [www.sunnysideup.co.nz](http://www.sunnysideup.co.nz)
+
+## Author
+
+
+
+Sunny Side Up Ltd.
