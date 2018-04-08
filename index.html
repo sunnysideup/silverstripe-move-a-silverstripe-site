@@ -737,11 +737,15 @@ jQuery(document).ready(
                    + runLocally("&nbsp;")
                 }
                 originalHTML += ""
-                + newSection("htaccess")
+                + newSection("htaccess and other tools")
                 + comment("backup any existing .htaccess:")
                 + runOnNewServer("mv .htaccess .htaccess.[TimeStamp]")
                 + comment("download latest .htaccess version:")
                 + runOnNewServer("wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/[SSVersion]/.htaccess -O .htaccess")
+                + comment("script for db dump")
+                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Dump_Silverstripe_Database.php -O dbdump.php")
+                + comment("script for tag update")
+                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Git_Tag_Change_Composer_Update.php -O updatetag.php")
                 + runLocally("&nbsp;");
                 if(useComposer) {
                     originalHTML += ""
