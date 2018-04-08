@@ -734,6 +734,8 @@ jQuery(document).ready(
                    + runOnNewServer("yes | git checkout [GITRepoTagOrBranch]")
                    + comment("update to latest code")
                    + runOnNewServer("git pull origin [GITRepoTagOrBranch]")
+                   + comment("set master as branch")
+                   + runOnNewServer("git branch --set-upstream-to=origin/master")
                    + runLocally("&nbsp;")
                 }
                 originalHTML += ""
