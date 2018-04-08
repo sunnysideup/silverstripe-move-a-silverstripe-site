@@ -1,287 +1,298 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta charset="utf-8">
-	<title>Transferring / Copying / Migrating / Deploying Silverstripe Websites</title>
-	<style>
-		body {padding: 5%;}
+    <meta charset="utf-8">
+    <title>Transferring / Copying / Migrating / Deploying Silverstripe Websites</title>
+    <style>
+        body {padding: 5%;}
 
-		header em {color: green; font-style: normal}
-		header u {color: blue; text-decoration: none;}
-		/* two cols */
-		form#WizardForm {width: 38%; float: left; min-width: 380px;}
-		#ToRunOuter {width: 58%; float: right; min-width: 380px;}
+        header em {color: green; font-style: normal}
+        header u {color: blue; text-decoration: none;}
+        /* two cols */
+        form#WizardForm {width: 38%; float: left; min-width: 380px;}
+        #ToRunOuter {width: 58%; float: right; min-width: 380px;}
 
-		/* form formatting */
-		#WizardForm fieldset {max-width: 550px; min-width: 380px; display: block; margin-bottom: 1em; padding: 0.7em; border-radius: 5px; background-color: #ddd;}
-		#WizardForm label {display: block;}
-		#WizardForm  input, #WizardForm  select {margin-bottom: 0.7em; width: 95%;}
+        /* form formatting */
+        #WizardForm fieldset {max-width: 550px; min-width: 380px; display: block; margin-bottom: 1em; padding: 0.7em; border-radius: 5px; background-color: #ddd;}
+        #WizardForm label {display: block;}
+        #WizardForm  input, #WizardForm  select {margin-bottom: 0.7em; width: 95%;}
 
-		/* special case */
-		#WizardForm  ul.checkboxes {list-style: none; margin-left: 0; padding-left: 0;}
-		#WizardForm label.checkbox {display: inline;  }
-		#WizardForm  input[type='checkbox'], #WizardForm  input[type='radio'] {width: auto;}
+        /* special case */
+        #WizardForm  ul.checkboxes {list-style: none; margin-left: 0; padding-left: 0;}
+        #WizardForm label.checkbox {display: inline;  }
+        #WizardForm  input[type='checkbox'], #WizardForm  input[type='radio'] {width: auto;}
 
-		/* output format */
-		#ToRun {max-width: 100%; border-radius: 5px; background-color: #111; border: 1px solid #555; color: #eee; padding: 0.7em; overflow: auto;}
-		#ToRun {font-family: courier, courier-new; white-space: nowrap}
-		#ToRun h5 {color: pink; border-bottom: 1px solid pink; font-size: 17px; font-family: arial, verdana, helvetica; padding-bottom: 0; margin-bottom: 0.7em;}
-		#ToRun p.comment {font-family: arial, verdana, helvetica; display: block; color: #fff; font-size: 15px; font-weight: bold; margin-top: 1.7em; }
-		#ToRun p.code {margin: 0; padding: 0; line-height: 1; margin-bottom: 0.5em;}
-		#ToRun pre {padding: 0; margin: 0;}
+        /* output format */
+        #ToRun {max-width: 100%; border-radius: 5px; background-color: #111; border: 1px solid #555; color: #eee; padding: 0.7em; overflow: auto;}
+        #ToRun {font-family: courier, courier-new; white-space: nowrap}
+        #ToRun h5 {color: pink; border-bottom: 1px solid pink; font-size: 17px; font-family: arial, verdana, helvetica; padding-bottom: 0; margin-bottom: 0.7em;}
+        #ToRun p.comment {font-family: arial, verdana, helvetica; display: block; color: #fff; font-size: 15px; font-weight: bold; margin-top: 1.7em; }
+        #ToRun p.code {margin: 0; padding: 0; line-height: 1; margin-bottom: 0.5em;}
+        #ToRun pre {padding: 0; margin: 0;}
 
-		footer {clear: both; padding-top: 3em;}
-		footer h3 {clear: both; padding-top: 3em;}
-		@media screen and (max-width: 1100px) {
-			#ToRunOuter {
-				width: 100%!important;
-			}
-		}
-	</style>
-	<link rel="icon" type="image/png" href="http://move-a-silverstripe-site.ssmods.com/favicon.ico">
+        footer {clear: both; padding-top: 3em;}
+        footer h3 {clear: both; padding-top: 3em;}
+        @media screen and (max-width: 1100px) {
+            #ToRunOuter {
+                width: 100%!important;
+            }
+        }
+    </style>
+    <link rel="icon" type="image/png" href="http://move-a-silverstripe-site.ssmods.com/favicon.ico">
 </head>
 <body>
-	<header>
-		<h1>Transfer / Copy / Migrate / Deploy Silverstripe Websites</h1>
+    <header>
+        <h1>Transfer / Copy / Migrate / Deploy Silverstripe Websites</h1>
 
-		<p>
-			I have moved a ton of <a href="http://www.silverstripe.org/">Silverstripe Websites</a> over the years, but I still have to think about the steps every time.
-			So here is a <em>script generator</em> of sorts that helps you transfer a Silverstripe website from one server to another server.
-		</p>
-		<p>By completing the details in the form below you build a command line (SSH) list of steps you can copy and then paste into a bash file (after careful inspection!) to migrate your website.</p>
-		<h2>Assumptions</h2>
-		<p>The wizard assumes the following about your project:</p>
-		<ul>
-			<li>SSH access to both servers</li>
-			<li>site uses SVN and/or GIT and/or Composer</li>
-			<li>parent folder of web-root folder is writable and can be used to store files</li>
-			<li>site uses _ss_environment.php file</li>
-			<li>Mysql Database has already been created on new server</li>
-			<li>the new server can access the old server without password by means of <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
-			<li>to make sure it runs smoothly you need </li>
-		</ul>
-		<h2>How this works?</h2>
-		<p>
-			Please complete your details in the form on the left.
-			Doing so will create a script on the right that you can copy line-by-line or as a whole, into a bash-esque script.
-			This script will move a website from an <em>old server</em> to a <em>new server</em> in its entirety.
-		</p>
-		<h2>Need help?</h2>
-		<p>
-			If you need help upgrading or migrating Silverstripe websites then please do not hesitate to contact
-			<a href="http://www.sunnysideup.co.nz">Sunny Side Up</a> for help. We offer competitive rates and high quality work.
-		</p>
-		<h2>Important note about security</h2>
-		<p>
-			To keep your passwords save, we recommend that you save this page as HTML in your browser and download it as such.
-			After that turn off the internet temporarily and use the page as a stand-alone tool to create your scripts.
-			Safe your generated scripts in a secure place.
-			No data entered into the form below is transferred anywhere.
-		</p>
-		<p>
-			This page uses localstorage to save details.
-			You can turn off the local storage using a checkbox below.
-			Turning off the local storage, on your next load of this page (CTRL+R), all saved data will be removed.
-		</p>
-	</header>
+        <p>
+            I have moved a ton of <a href="http://www.silverstripe.org/">Silverstripe Websites</a> over the years, but I still have to think about the steps every time.
+            So here is a <em>script generator</em> of sorts that helps you transfer a Silverstripe website from one server to another server.
+        </p>
+        <p>By completing the details in the form below you build a command line (SSH) list of steps you can copy and then paste into a bash file (after careful inspection!) to migrate your website.</p>
+        <h2>Assumptions</h2>
+        <p>The wizard assumes the following about your project:</p>
+        <ul>
+            <li>SSH access to both servers</li>
+            <li>site uses SVN and/or GIT and/or Composer</li>
+            <li>parent folder of web-root folder is writable and can be used to store files</li>
+            <li>site uses _ss_environment.php file</li>
+            <li>Mysql Database has already been created on new server</li>
+            <li>the new server can access the old server without password by means of <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
+            <li>to make sure it runs smoothly you need </li>
+        </ul>
+        <h2>How this works?</h2>
+        <p>
+            Please complete your details in the form on the left.
+            Doing so will create a script on the right that you can copy line-by-line or as a whole, into a bash-esque script.
+            This script will move a website from an <em>old server</em> to a <em>new server</em> in its entirety.
+        </p>
+        <h2>Need help?</h2>
+        <p>
+            If you need help upgrading or migrating Silverstripe websites then please do not hesitate to contact
+            <a href="http://www.sunnysideup.co.nz">Sunny Side Up</a> for help. We offer competitive rates and high quality work.
+        </p>
+        <h2>Important note about security</h2>
+        <p>
+            To keep your passwords save, we recommend that you save this page as HTML in your browser and download it as such.
+            After that turn off the internet temporarily and use the page as a stand-alone tool to create your scripts.
+            Safe your generated scripts in a secure place.
+            No data entered into the form below is transferred anywhere.
+        </p>
+        <p>
+            This page uses localstorage to save details.
+            You can turn off the local storage using a checkbox below.
+            Turning off the local storage, on your next load of this page (CTRL+R), all saved data will be removed.
+        </p>
+    </header>
 
-	<form id="WizardForm">
-		<fieldset id="TechnologiesUsed">
-			<h2>save data</h2>
-			<ul class="checkboxes">
-				<li><input id="useLocalStorage" type="checkbox" checked="checked"><label for="useLocalStorage" class="checkbox">save values in local storage</label></li>
-			</ul>
-			<h2>General Inputs</h2>
-			<label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value=""></li>
-			<h2>Settings</h2>
-			<ul class="checkboxes">
-				<li><input id="makeBackup" type="checkbox" checked="checked"><label for="makeBackup" class="checkbox">make backups of files</label></li>
-				<li><input id="runVerbose" type="checkbox" checked="checked"><label for="runVerbose" class="checkbox">run script in verbose mode</label></li>
-				<li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">use SSH</label></li>
-				<li><input id="newServerCanAccessOldServer" type="checkbox" checked="checked"><label for="newServerCanAccessOldServer" class="checkbox">new server can access old server through SSH methods specified below?</label></li>
-				<li><input id="newServerHasReadRightsToVersioningRepository" type="checkbox" checked="checked"><label for="newServerHasReadRightsToVersioningRepository" class="checkbox">new server can read code repository?</label></li>
-				<li><input id="repoType" name="repoType" type="radio" value="GIT" checked="checked"><label for="repoType" class="checkbox">use GIT</label></li>
-				<li><input id="repoType" name="repoType" type="radio" value="SVN"><label for="repoType" class="checkbox">use SVN</label></li>
-				<li><input id="useComposer" type="checkbox" value="1"><label for="useComposer" class="checkbox">use Composer</label></li>
-				<li class="useServerComposerON" style="display: none;"><input id="useServerComposer" type="checkbox" value="1"><label for="useServerComposer" class="checkbox">Composer installed on server</label></li>
-			</ul>
-		</fieldset>
+    <form id="WizardForm">
+        <fieldset id="TechnologiesUsed">
+            <h2>save data</h2>
+            <ul class="checkboxes">
+                <li><input id="useLocalStorage" type="checkbox" checked="checked"><label for="useLocalStorage" class="checkbox">save values in local storage</label></li>
+            </ul>
+            <h2>General Inputs</h2>
+            <label for="PrecompWebsite">base url (e.g. mysite.co.nz)</label><input type="text" id="PrecompWebsite" value=""></li>
+            <h2>Settings</h2>
+            <ul class="checkboxes">
+                <li><input id="makeBackup" type="checkbox" checked="checked"><label for="makeBackup" class="checkbox">make backups of files</label></li>
+                <li><input id="runVerbose" type="checkbox" checked="checked"><label for="runVerbose" class="checkbox">run script in verbose mode (may not work on all servers)</label></li>
+                <li><input id="useSSH" type="checkbox" checked="checked"><label for="useSSH" class="checkbox">use SSH</label></li>
+                <li><input id="newServerCanAccessOldServer" type="checkbox" checked="checked"><label for="newServerCanAccessOldServer" class="checkbox">new server can access old server through SSH methods specified below?</label></li>
+                <li><input id="newServerHasReadRightsToVersioningRepository" type="checkbox" checked="checked"><label for="newServerHasReadRightsToVersioningRepository" class="checkbox">new server can read code repository?</label></li>
+                <li><input id="repoType" name="repoType" type="radio" value="GIT" checked="checked"><label for="repoType" class="checkbox">use GIT</label></li>
+                <li><input id="repoType" name="repoType" type="radio" value="SVN"><label for="repoType" class="checkbox">use SVN</label></li>
+                <li><input id="useComposer" type="checkbox" value="1" checked="checked"><label for="useComposer" class="checkbox">use Composer</label></li>
+                <li class="useServerComposerON" style="display: none;" checked="checked"><input id="useServerComposer" type="checkbox" value="1"><label for="useServerComposer" class="checkbox">Composer installed on server</label></li>
+            </ul>
+        </fieldset>
 
-		<fieldset>
-			<h2>Old Server</h2>
-			<ul class="checkboxes">
-				<li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
-				<li><input id="OldCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="OldCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
-			</ul>
-			<label for="OldWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="OldWebRoot" value="">
-			<div class="useSSHAliasOnOldServerON" style="display: none;">
-				<label for="OldSSHAlias">SSH Alias</label><input type="text" id="OldSSHAlias" value="">
-			</div>
-			<div class="useSSHAliasOnOldServerOFF">
-				<label for="OldSSHUser">SSH user</label><input type="text" id="OldSSHUser" value="">
-				<label for="OldIP">IP address</label><input type="text" id="OldIP" value="">
-				<label for="OldSSHPort">SSH Port</label><input type="text" id="OldSSHPort" value="22">
-			</div>
-		</fieldset>
+        <fieldset>
+            <h2>Old Server</h2>
+            <ul class="checkboxes">
+                <li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
+                <li><input id="runVerboseOnOldServer" type="checkbox" value="1"><label for="runVerboseOnOldServer" class="checkbox">run verbose (may not work on all servers)</label></li>
+                <li><input id="OldCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="OldCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
+            </ul>
+            <label for="OldWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="OldWebRoot" value="">
+            <div class="useSSHAliasOnOldServerON" style="display: none;">
+                <label for="OldSSHAlias">SSH Alias</label><input type="text" id="OldSSHAlias" value="">
+            </div>
+            <div class="useSSHAliasOnOldServerOFF">
+                <label for="OldSSHUser">SSH user</label><input type="text" id="OldSSHUser" value="">
+                <label for="OldIP">IP address</label><input type="text" id="OldIP" value="">
+                <label for="OldSSHPort">SSH Port</label><input type="text" id="OldSSHPort" value="22">
+            </div>
+        </fieldset>
 
-		<fieldset>
-			<h2>Old Database</h2>
-			<label for="OldDBName">DB name</label><input type="text" id="OldDBName">
-			<label for="OldDBUser">DB user</label><input type="text" id="OldDBUser">
-			<label for="OldDBPassword">db password</label><input type="text" id="OldDBPassword">
-			<label for="OldDBHost">db location</label><input type="text" id="OldDBHost" value="localhost">
-		</fieldset>
+        <fieldset>
+            <h2>Old Database</h2>
+            <label for="OldDBName">DB name</label><input type="text" id="OldDBName">
+            <label for="OldDBUser">DB user</label><input type="text" id="OldDBUser">
+            <label for="OldDBPassword">db password</label><input type="text" id="OldDBPassword">
+            <label for="OldDBHost">db location</label><input type="text" id="OldDBHost" value="localhost">
+        </fieldset>
 
-		<fieldset>
-			<h2>New Website</h2>
-			<label for="WebsiteDomainName">website domain (with http)</label><input type="text" id="WebsiteDomainName">
-			<label for="Environment">Environment (dev / live / test)</label><select id="Environment"><option value="dev">dev</option><option value="test">test</option><option value="live">live</option></select>
-			<label for="SSVersion">Silverstripe Installer Version (e.g. 3.1)</label><select id="SSVersion">
-				<option value="2.4">2.4</option>
-				<option value="3.0">3.0</option>
-				<option value="3.1" selected="selected">3.1</option>
-				<option value="3.2">3.2</option>
-				<option value="3.3">3.3</option>
-				<option value="4.0">4.0</option>
-			</select>
-			<label for="CMSUser">default CMS User</label><input type="text" id="CMSUser">
-			<label for="CMSPassword">default CMS Password</label><input type="text" id="CMSPassword">
-			<div class="isLiveOFF" style="display: none;">
-				<label for="CatchAllEmail">catch-all Email (send all emails to...)</label><input type="text" id="CatchAllEmail">
-			</div>
-		</fieldset>
+        <fieldset>
+            <h2>New Website</h2>
+            <label for="WebsiteDomainName">website domain (with http)</label><input type="text" id="WebsiteDomainName">
+            <label for="Environment">Environment (dev / live / test)</label><select id="Environment"><option value="dev">dev</option><option value="test">test</option><option value="live">live</option></select>
+            <label for="SSVersion">Silverstripe Installer Version (e.g. 3.1)</label><select id="SSVersion">
+                <option value="2.4">2.4</option>
+                <option value="3.0">3.0</option>
+                <option value="3.1" selected="selected">3.1</option>
+                <option value="3.2">3.2</option>
+                <option value="3.3">3.3</option>
+                <option value="3.3">3.4</option>
+                <option value="3.3">3.5</option>
+                <option value="3.3">3.6</option>
+                <option value="3.3">3.7</option>
+                <option value="3.3">3.8</option>
+                <option value="4.0">4.0</option>
+                <option value="4.0">4.1</option>
+                <option value="4.0">4.2</option>
+                <option value="4.0">4.3</option>
+            </select>
+            <label for="CMSUser">default CMS User</label><input type="text" id="CMSUser">
+            <label for="CMSPassword">default CMS Password</label><input type="text" id="CMSPassword">
+            <div class="isLiveOFF" style="display: none;">
+                <label for="CatchAllEmail">catch-all Email (send all emails to...)</label><input type="text" id="CatchAllEmail">
+            </div>
+        </fieldset>
 
-		<fieldset>
-			<h2>Versioning</h2>
-			<div class="useGITON" style="display: none;">
-				<label for="GITRepo">ssh git repo location (github prefers https / bitbucket prefers ssh)</label><input type="text" id="GITRepo">
-				<label for="GITRepoTagOrBranch">git repo Tag or Branch</label><input type="text" id="GITRepoTagOrBranch" value="master">
-			</div>
-			<div class="useSVNON" style="display: none;">
-				<label for="SVNRepo">svn repo location (include branch / tag)</label><input type="text" id="SVNRepo">
-			</div>
-		</fieldset>
-
-
-		<fieldset>
-			<h2>New Server</h2>
-			<ul class="checkboxes">
-				<li><input id="useSSHAliasOnNewServer" type="checkbox" value="1"><label for="useSSHAliasOnNewServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
-				<li><input id="NewCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="NewCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
-			</ul>
-			<label for="NewWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="NewWebRoot" value="/var/www/mysite.co.nz">
-			<div class="useSSHAliasOnNewServerON" style="display: none;">
-				<label for="NewSSHAlias">SSH Alias</label><input type="text" id="NewSSHAlias" value="">
-			</div>
-			<div class="useSSHAliasOnNewServerOFF">
-				<label for="NewSSHUser">SSH user</label><input type="text" id="NewSSHUser" value="">
-				<label for="NewIP">IP address</label><input type="text" id="NewIP" value="">
-				<label for="NewSSHPort">SSH Port</label><input type="text" id="NewSSHPort" value="22">
-			</div>
-			<label for="LinuxWebDirUser">Linux Web Root User (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirUser">
-			<label for="LinuxWebDirGroup">Linux Web Root Group (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirGroup">
-		</fieldset>
-
-		<fieldset>
-			<h2>New Database</h2>
-			<label for="NewDBName">DB name</label><input type="text" id="NewDBName">
-			<label for="NewDBPrefix">prefix (e.g. www_)</label><input type="text" id="NewDBPrefix" value="">
-			<label for="NewDBSuffix">suffix (can be full DB name)</label><input type="text" id="NewDBSuffix">
-			<label for="NewDBUser">DB user</label><input type="text" id="NewDBUser">
-			<label for="NewDBPassword">password</label><input type="text" id="NewDBPassword">
-			<label for="NewDBHost">location</label><input type="text" id="NewDBHost" value="localhost">
-		</fieldset>
-	</form>
+        <fieldset>
+            <h2>Versioning</h2>
+            <div class="useGITON" style="display: none;">
+                <label for="GITRepo">ssh git repo location (github prefers https / bitbucket prefers ssh)</label><input type="text" id="GITRepo">
+                <label for="GITRepoTagOrBranch">git repo Tag or Branch</label><input type="text" id="GITRepoTagOrBranch" value="master">
+            </div>
+            <div class="useSVNON" style="display: none;">
+                <label for="SVNRepo">svn repo location (include branch / tag)</label><input type="text" id="SVNRepo">
+            </div>
+        </fieldset>
 
 
-	<div id="ToRunOuter">
-		<div id="ToRun"><h5># Log in to old server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span><h5># Run on old server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># dump database</p>mysqldump --user=<span style="color: red; font-weight: bold;">OldDBUser</span> -p=<span style="color: red; font-weight: bold;">'OldDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">OldDBName</span> &gt; ../db.sql<p class="comment"># log out</p>exit<br><br><h5># Log in to new server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">NewSSHUser</span>@<span style="color: red; font-weight: bold;">NewIP</span><br><br><h5># Run on new server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># back up any existing assets</p>mv assets assets_backup_1442444305646<p class="comment"># RSYNC assets from old server</p>rsync --stats -chavzPr "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/<p class="comment"># back up any existing db</p>mv ../db.sql ../db.backup_of_db_file.1442444305646.sql<p class="comment"># move db dump to new server (delete from old server)</p>rsync --stats --remove-source-files -chavzP "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql<br><p class="comment"># back up existing database</p>mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.backup.1442444305646.sql<p class="comment"># import database</p>mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br><p class="comment"># backup any existing .htaccess:</p>mv .htaccess .htaccess.1442444305646<p class="comment"># download latest .htaccess version:</p>wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/<span style="color: green; font-weight: bold;">3.1</span>/.htaccess -O .htaccess<br><p class="comment"># backup any _ss_environment.php file:</p>mv ../_ss_environment.php ../_ss_environment.1442444305646.php<p class="comment"># create ss environment file:</p>echo "&lt;?php<br><br>define('SS_ENVIRONMENT_TYPE', '<span style="color: green; font-weight: bold;">dev</span>');<br>define('SS_DEFAULT_ADMIN_USERNAME', '<span style="color: red; font-weight: bold;">CMSUser</span>');<br>define('SS_DEFAULT_ADMIN_PASSWORD', '<span style="color: red; font-weight: bold;">CMSPassword</span>');<br><br>define('SS_DATABASE_PREFIX', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');<br>define('SS_DATABASE_SERVER', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_USERNAME', '<span style="color: red; font-weight: bold;">NewDBUser</span>');<br>define('SS_DATABASE_PASSWORD', '<span style="color: red; font-weight: bold;">NewDBPassword</span>');<br><br>global $_FILE_TO_URL_MAPPING; $_FILE_TO_URL_MAPPING['<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>'] = '<span style="color: red; font-weight: bold;">WebsiteDomainName</span>';<br><br>/**<br>&nbsp; * Here are some useful snippets for future hacks: <br>&nbsp; * EXPORT DB: mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p=<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.sql<br>&nbsp; * <br>&nbsp; * IMPORT DB: mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br>&nbsp; *<br>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <br>&nbsp; *<br>&nbsp; *<br>&nbsp; *<br>&nbsp; */<br>" &gt; ../_ss_environment.php<br><p class="comment"># run dev/build:</p>php framework/cli-script.php dev/build flush=all<p class="comment"># run it again to check for any errors:</p>php framework/cli-script.php dev/build flush=all<br><p class="comment"># check for cron jobs:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any cron-jobs to transfer?" -timeout 10<p class="comment"># check for other tasks:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any tasks to run?" -timeout 10<br><br><br><br></div>
-		<p><a href="http://move-a-silverstripe-site.ssmods.com/index.html#" id="CopyToClipBoard">copy to clipboard ...</a></p>
-		<h5 style="color: red">Please use the script template at your own risk!</h5>
-	</div>
-	<footer>
-		<p>
-			The script's default values and output is based on a typical <em>Ubuntu</em> server setup.
-			With a few alterations, I am sure it will also work on other flavours of linux and macs.
-		</p>
-		<h2>More Migration Steps</h2>
-		<p>
-			Apart from running the steps in this script below, there are several other steps in moving a website.
-			Here are some steps you may take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:
-		</p>
-		<ol>
-			<li>create <u>mysite.co.nz</u> on <em>new server</em> (set up folder, host entry, etc...)</li>
-			<li>create mysql database on <em>new server</em></li>
-			<li>add <u>temp-old.mysite.co.nz</u> to the <em>old server's</em> DNS</li>
-			<li>setup A-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of <em>old server</em></li>
-			<li>add <u>temp-new.mysite.co.nz</u> to <em>new server's</em> DNS</li>
-			<li>setup A-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of <em>new server</em></li>
-			<li><strong>run this script</strong></li>
-			<li>add redirect in .htaccess file of <em>new server</em> redirecting all traffic to <u>temp-old.mysite.co.nz</u> (see example below)</li>
-			<li>update A-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of <em>new server</em></li>
-			<li> ... </li>
-			<li>wait a few days</li>
-			<li> ... </li>
-			<li><strong>run this script again</strong></li>
-			<li>remove redirect in .htaccess file on <em>new server</em> back to <u>temp-old.mysite.co.nz</u></li>
-			<li>add redirect in .htaccess file on <em>old server</em> to <u>temp-new.mysite.co.nz</u></li>
-			<li>add DNS entry for <u>temp-old.mysite.co.nz</u> to <em>new server</em></li>
-			<li>change A-record for <u>temp-old.mysite.co.nz</u> to point to IP of <em>new server</em></li>
-			<li>add redirect in .htaccess of <em>new server</em> to redirect <u>temp-old.mysite.co.nz</u> to <u>mysite.co.nz</u></li>
-			<li> ... </li>
-			<li>wait a few weeks</li>
-			<li> ... </li>
-			<li>close down <em>old server</em></li>
-			<li>remove A-record for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u></li>
-			<li>remove DNS for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u> one <em>new server</em></li>
-			<li>remove redirects in .htaccess file on <em>new server</em></li>
-		</ol>
-		<p>.htaccess redirections should be added as follows (change new domain names as needed):</p>
-		<pre>
+        <fieldset>
+            <h2>New Server</h2>
+            <ul class="checkboxes">
+                <li><input id="useSSHAliasOnNewServer" type="checkbox" value="1"><label for="useSSHAliasOnNewServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on new server</label></li>
+                <li><input id="runVerboseOnNewServer" type="checkbox" value="1"><label for="runVerboseOnNewServer" class="checkbox">run verbose (may not work on all servers)</label></li>
+                <li><input id="NewCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="NewCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
+            </ul>
+            <label for="NewWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="NewWebRoot" value="/var/www/mysite.co.nz">
+            <div class="useSSHAliasOnNewServerON" style="display: none;">
+                <label for="NewSSHAlias">SSH Alias</label><input type="text" id="NewSSHAlias" value="">
+            </div>
+            <div class="useSSHAliasOnNewServerOFF">
+                <label for="NewSSHUser">SSH user</label><input type="text" id="NewSSHUser" value="">
+                <label for="NewIP">IP address</label><input type="text" id="NewIP" value="">
+                <label for="NewSSHPort">SSH Port</label><input type="text" id="NewSSHPort" value="22">
+            </div>
+            <label for="LinuxWebDirUser">Linux Web Root User (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirUser">
+            <label for="LinuxWebDirGroup">Linux Web Root Group (leave blank to ignore chmod and chown settings)</label><input type="text" id="LinuxWebDirGroup">
+        </fieldset>
+
+        <fieldset>
+            <h2>New Database</h2>
+            <label for="NewDBName">Name</label><input type="text" id="NewDBName">
+            <label for="NewDBName">Time Zone</label><input type="text" id="NewDBTimeZone" value="Pacific/Auckland">
+            <label for="NewDBPrefix">Prefix (e.g. www_)</label><input type="text" id="NewDBPrefix" value="">
+            <label for="NewDBSuffix">Suffix (can be full DB name)</label><input type="text" id="NewDBSuffix">
+            <label for="NewDBUser">User</label><input type="text" id="NewDBUser">
+            <label for="NewDBPassword">Password</label><input type="text" id="NewDBPassword">
+            <label for="NewDBHost">Location</label><input type="text" id="NewDBHost" value="localhost">
+        </fieldset>
+    </form>
+
+
+    <div id="ToRunOuter">
+        <div id="ToRun"><h5># Log in to old server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span><h5># Run on old server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># dump database</p>mysqldump --user=<span style="color: red; font-weight: bold;">OldDBUser</span> -p=<span style="color: red; font-weight: bold;">'OldDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">OldDBName</span> &gt; ../db.sql<p class="comment"># log out</p>exit<br><br><h5># Log in to new server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">NewSSHUser</span>@<span style="color: red; font-weight: bold;">NewIP</span><br><br><h5># Run on new server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># back up any existing assets</p>mv assets assets_backup_1442444305646<p class="comment"># RSYNC assets from old server</p>rsync --stats -chavzPr "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/<p class="comment"># back up any existing db</p>mv ../db.sql ../db.backup_of_db_file.1442444305646.sql<p class="comment"># move db dump to new server (delete from old server)</p>rsync --stats --remove-source-files -chavzP "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql<br><p class="comment"># back up existing database</p>mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.backup.1442444305646.sql<p class="comment"># import database</p>mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br><p class="comment"># backup any existing .htaccess:</p>mv .htaccess .htaccess.1442444305646<p class="comment"># download latest .htaccess version:</p>wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/<span style="color: green; font-weight: bold;">3.1</span>/.htaccess -O .htaccess<br><p class="comment"># backup any _ss_environment.php file:</p>mv ../_ss_environment.php ../_ss_environment.1442444305646.php<p class="comment"># create ss environment file:</p>echo "&lt;?php<br><br>define('SS_ENVIRONMENT_TYPE', '<span style="color: green; font-weight: bold;">dev</span>');<br>define('SS_DEFAULT_ADMIN_USERNAME', '<span style="color: red; font-weight: bold;">CMSUser</span>');<br>define('SS_DEFAULT_ADMIN_PASSWORD', '<span style="color: red; font-weight: bold;">CMSPassword</span>');<br><br>define('SS_DATABASE_PREFIX', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');<br>define('SS_DATABASE_SERVER', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_USERNAME', '<span style="color: red; font-weight: bold;">NewDBUser</span>');<br>define('SS_DATABASE_PASSWORD', '<span style="color: red; font-weight: bold;">NewDBPassword</span>');<br><br>global $_FILE_TO_URL_MAPPING; $_FILE_TO_URL_MAPPING['<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>'] = '<span style="color: red; font-weight: bold;">WebsiteDomainName</span>';<br><br>/**<br>&nbsp; * Here are some useful snippets for future hacks: <br>&nbsp; * EXPORT DB: mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p=<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.sql<br>&nbsp; * <br>&nbsp; * IMPORT DB: mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br>&nbsp; *<br>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <br>&nbsp; *<br>&nbsp; *<br>&nbsp; *<br>&nbsp; */<br>" &gt; ../_ss_environment.php<br><p class="comment"># run dev/build:</p>php framework/cli-script.php dev/build flush=all<p class="comment"># run it again to check for any errors:</p>php framework/cli-script.php dev/build flush=all<br><p class="comment"># check for cron jobs:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any cron-jobs to transfer?" -timeout 10<p class="comment"># check for other tasks:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any tasks to run?" -timeout 10<br><br><br><br></div>
+        <p><a href="http://move-a-silverstripe-site.ssmods.com/index.html#" id="CopyToClipBoard">copy to clipboard ...</a></p>
+        <h5 style="color: red">Please use the script template at your own risk!</h5>
+    </div>
+    <footer>
+        <p>
+            The script's default values and output is based on a typical <em>Ubuntu</em> server setup.
+            With a few alterations, I am sure it will also work on other flavours of linux and macs.
+        </p>
+        <h2>More Migration Steps</h2>
+        <p>
+            Apart from running the steps in this script below, there are several other steps in moving a website.
+            Here are some steps you may take in migrating www.mysite.co.nz from an <em>old server</em> to a <em>new server</em>:
+        </p>
+        <ol>
+            <li>create <u>mysite.co.nz</u> on <em>new server</em> (set up folder, host entry, etc...)</li>
+            <li>create mysql database on <em>new server</em></li>
+            <li>add <u>temp-old.mysite.co.nz</u> to the <em>old server's</em> DNS</li>
+            <li>setup A-record for <u>temp-old.mysite.co.nz</u> pointing to IP address of <em>old server</em></li>
+            <li>add <u>temp-new.mysite.co.nz</u> to <em>new server's</em> DNS</li>
+            <li>setup A-record for <u>temp-new.mysite.co.nz</u> pointing to IP address of <em>new server</em></li>
+            <li><strong>run this script</strong></li>
+            <li>add redirect in .htaccess file of <em>new server</em> redirecting all traffic to <u>temp-old.mysite.co.nz</u> (see example below)</li>
+            <li>update A-record for <u>mysite.co.nz</u> and <u>www.mysite.co.nz</u> to point to IP of <em>new server</em></li>
+            <li> ... </li>
+            <li>wait a few days</li>
+            <li> ... </li>
+            <li><strong>run this script again</strong></li>
+            <li>remove redirect in .htaccess file on <em>new server</em> back to <u>temp-old.mysite.co.nz</u></li>
+            <li>add redirect in .htaccess file on <em>old server</em> to <u>temp-new.mysite.co.nz</u></li>
+            <li>add DNS entry for <u>temp-old.mysite.co.nz</u> to <em>new server</em></li>
+            <li>change A-record for <u>temp-old.mysite.co.nz</u> to point to IP of <em>new server</em></li>
+            <li>add redirect in .htaccess of <em>new server</em> to redirect <u>temp-old.mysite.co.nz</u> to <u>mysite.co.nz</u></li>
+            <li> ... </li>
+            <li>wait a few weeks</li>
+            <li> ... </li>
+            <li>close down <em>old server</em></li>
+            <li>remove A-record for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u></li>
+            <li>remove DNS for <u>temp-old.mysite.co.nz</u> and <u>temp-new.mysite.co.nz</u> one <em>new server</em></li>
+            <li>remove redirects in .htaccess file on <em>new server</em></li>
+        </ol>
+        <p>.htaccess redirections should be added as follows (change new domain names as needed):</p>
+        <pre>
 &lt;IfModule mod_rewrite.c&gt;
   RewriteEngine On
   RewriteCond %{HTTP_HOST} ^temp-old.mysite.co.nz$ [OR]
   RewriteCond %{HTTP_HOST} ^www.temp-old.mysite.co.nz$
   RewriteRule (.*)$ http://www.mysite.co.nz/$1 [R=302,L]
 &lt;/IfModule&gt;
-		</pre>
-		<p><strong>do not use 301 - ever - because it does not help you much and errors are fatal!</strong></p>
-		<p>Make sure to set the TTL for the A records changes to as low a number if possible. You can also change that prior to making real changes to that when you make the change the DNS entries around the world are updated quicker (thank you James). </p>
-		<h2>Rsync Notes</h2>
-		<p>
-			RSync:<br>
-			# c = skip based based on checksum<br>
-			# h = human readable<br>
-			# a = archive mode???<br>
-			# v = verbose<br>
-			# z = compress<br>
-			# P = partial progress<br />
-			# r = recursive<br />
-			# e = SSH specifics<br />
-		</p>
-		<!--
-		<h2>Donations in Bitcoin</h2>
-		<p>If you use this tool then please make a small donation to support this project.</p>
-		<form action="https://bitpay.com/checkout" method="post">
-			<input type="hidden" name="action" value="checkout" />
-			<input type="hidden" name="posData" value="" />
-			<input type="hidden" name="data" value="PsqZZ6WX9/sGBTTFZkU9vtZq2zulKXtGrbcRiWyPws1T/STsoiqQ8KVQWfhKlD1+muzE1zP4cG82yiCM53iT8v9vBb21dfZNR/ltGOpKzfv+rNeCKjdWUJKpU6n7R3EiZQnm2qCrEmbLqon8nY+NCj3qm1f6A0DR9xDrEmEbtzG2Dq+z1+fJELnNdAY/V/pUhrWBvL8DnKDsi7uUWOMxRp8F3UYPVaob+8+xeDUpi9B4eRl2jwa9YNazP/o6J/4XxhM/0iRpWpcxfwz24+2CyQ==" />
-			<input type="submit" name="submit" value="Donate using Bitcoins" />
-		</form>
-		-->
-		<h2>Donations</h2>
-		<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" />
-			<input type="hidden" name="cmd" value="_s-xclick" />
-			<input type="hidden" name="hosted_button_id" value="M9S3XHFBT36HG" />
-			<input type="submit" name="submit" value="Donate using Credit Card" />
-		</form>
-		<h2>Feedback</h2>
-		<p>
-			If you have any feedback then please contact migrate @ sunnysideup dot co dot nz via the interwebs.
-		</p>
-		<p>
-			You can make a pull request to improve this script on <a href="https://github.com/sunnysideup/silverstripe-move-a-silverstripe-site">github</a>.
-		</p>
-	</footer>
+        </pre>
+        <p><strong>do not use 301 - ever - because it does not help you much and errors are fatal!</strong></p>
+        <p>Make sure to set the TTL for the A records changes to as low a number if possible. You can also change that prior to making real changes to that when you make the change the DNS entries around the world are updated quicker (thank you James). </p>
+        <h2>Rsync Notes</h2>
+        <p>
+            RSync:<br>
+            # c = skip based based on checksum<br>
+            # h = human readable<br>
+            # a = archive mode???<br>
+            # v = verbose<br>
+            # z = compress<br>
+            # P = partial progress<br />
+            # r = recursive<br />
+            # e = SSH specifics<br />
+        </p>
+        <!--
+        <h2>Donations in Bitcoin</h2>
+        <p>If you use this tool then please make a small donation to support this project.</p>
+        <form action="https://bitpay.com/checkout" method="post">
+            <input type="hidden" name="action" value="checkout" />
+            <input type="hidden" name="posData" value="" />
+            <input type="hidden" name="data" value="PsqZZ6WX9/sGBTTFZkU9vtZq2zulKXtGrbcRiWyPws1T/STsoiqQ8KVQWfhKlD1+muzE1zP4cG82yiCM53iT8v9vBb21dfZNR/ltGOpKzfv+rNeCKjdWUJKpU6n7R3EiZQnm2qCrEmbLqon8nY+NCj3qm1f6A0DR9xDrEmEbtzG2Dq+z1+fJELnNdAY/V/pUhrWBvL8DnKDsi7uUWOMxRp8F3UYPVaob+8+xeDUpi9B4eRl2jwa9YNazP/o6J/4XxhM/0iRpWpcxfwz24+2CyQ==" />
+            <input type="submit" name="submit" value="Donate using Bitcoins" />
+        </form>
+        -->
+        <h2>Donations</h2>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" />
+            <input type="hidden" name="cmd" value="_s-xclick" />
+            <input type="hidden" name="hosted_button_id" value="M9S3XHFBT36HG" />
+            <input type="submit" name="submit" value="Donate using Credit Card" />
+        </form>
+        <h2>Feedback</h2>
+        <p>
+            If you have any feedback then please contact migrate @ sunnysideup dot co dot nz via the interwebs.
+        </p>
+        <p>
+            You can make a pull request to improve this script on <a href="https://github.com/sunnysideup/silverstripe-move-a-silverstripe-site">github</a>.
+        </p>
+    </footer>
 <script>
 
 /*! jQuery v2.1.3 | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
@@ -293,503 +304,588 @@
 </script>
 <script>
 jQuery(document).ready(
-	function() {
-		//var originalHTML = jQuery("#ToRun").html();
-		jQuery("input#PrecompWebsite").on(
-			"change",
-			function() {
-				var site = jQuery(this).val();
-				var siteWithDashes = site.replace(/\./g, "_");
-				if(jQuery("#OldWebRoot").val() == "")          {jQuery("#OldWebRoot").val("/var/www/"+site);}
-				if(jQuery("#OldDBName").val() == "")           {jQuery("#OldDBName").val(siteWithDashes);}
-				if(jQuery("#WebsiteDomainName").val() == "")   {jQuery("#WebsiteDomainName").val("http://www."+site);}
-				if(jQuery("#NewDBName").val() == "")   {jQuery("#NewDBName").val(siteWithDashes);}
+    function() {
+        //var originalHTML = jQuery("#ToRun").html();
+        jQuery("input#PrecompWebsite").on(
+            "change",
+            function() {
+                var site = jQuery(this).val();
+                var siteWithDashes = site.replace(/\./g, "_");
+                if(jQuery("#OldWebRoot").val() == "")          {jQuery("#OldWebRoot").val("/var/www/"+site);}
+                if(jQuery("#OldDBName").val() == "")           {jQuery("#OldDBName").val(siteWithDashes);}
+                if(jQuery("#WebsiteDomainName").val() == "")   {jQuery("#WebsiteDomainName").val("http://www."+site);}
+                if(jQuery("#NewDBName").val() == "")   {jQuery("#NewDBName").val(siteWithDashes);}
 
-			}
-		);
-		jQuery("a#CopyToClipBoard").on(
-			"click",
-			function(event){
-				event.preventDefault();
-				SelectText("ToRun");
-				try {
-					var successful = document.execCommand('copy');
-					var msg = successful ? 'successful' : 'unsuccessful';
-					alert('Copying text command was ' + msg);
-				}
-				catch (err) {
-					alert("sorry, copy is not supported by your browser, please copy manually.");
-				}
-				return false;
-			}
-		);
-		var useLocalStorage = localStorage.getItem("useLocalStorage") == "true" ? true : false;
-		jQuery("form input, form select").each(
-			function(i, el) {
-				var id = jQuery(el).attr("id");
-				var value = localStorage.getItem(id);
-				if(value !== null && typeof id !== "undefined") {
-					if(useLocalStorage || id == "useLocalStorage") {
-						if(jQuery(el).attr("type") == "radio") {
-							var name = jQuery(el).attr("name");
-							jQuery('input[name="' + name + '"][value="' + value + '"]').prop('checked', true);
-						}
-						else if(jQuery(el).attr("type") == "checkbox") {
-							//console.debug("setting "+id+" as "+value);
+            }
+        );
+        jQuery("a#CopyToClipBoard").on(
+            "click",
+            function(event){
+                event.preventDefault();
+                SelectText("ToRun");
+                try {
+                   var successful = document.execCommand('copy');
+                   var msg = successful ? 'successful' : 'unsuccessful';
+                   alert('Copying text command was ' + msg);
+                }
+                catch (err) {
+                   alert("sorry, copy is not supported by your browser, please copy manually.");
+                }
+                return false;
+            }
+        );
+        var useLocalStorage = localStorage.getItem("useLocalStorage") === "true" ? true : false;
+        jQuery("form input, form select").each(
+            function(i, el) {
+                var id = jQuery(el).attr("id");
+                var value = localStorage.getItem(id);
+                if(value !== null && typeof id !== "undefined") {
+                   if(useLocalStorage || id == "useLocalStorage") {
+                         if(jQuery(el).attr("type") == "radio") {
+                            var name = jQuery(el).attr("name");
+                             jQuery('input[name="' + name + '"][value="' + value + '"]').prop('checked', true);
+                         } else if(jQuery(el).attr("type") == "checkbox") {
+                            console.debug("setting "+id+" as "+value);
 
-							if(value == "true") {
-								jQuery(el).attr("checked", "checked");
-							}
-							else {
-								jQuery(el).removeAttr("checked", "checked");
-							}
-						}
-						else {
-							jQuery(el).val(value);
-						}
-					}
-					else {
-						localStorage.removeItem(id);
-					}
-				}
-			}
-		);
-		jQuery("form input, form select").on(
-			"change",
-			function() {
-				//save
-				useLocalStorage = jQuery("#useLocalStorage").is(":checked");
-				var id = jQuery(this).attr("id");
-				if(useLocalStorage || id == "useLocalStorage") {
-					if(typeof id !== "undefined") {
+                            if(value == "true") {
+                                jQuery(el).attr("checked", "checked");
+                            }
+                            else {
+                                jQuery(el).removeAttr("checked", "checked");
+                            }
+                        }
+                        else {
+                            jQuery(el).val(value);
+                        }
+                       }
+                       else {
+                        localStorage.removeItem(id);
+                       }
+                }
+            }
+        );
+        jQuery("form input, form select").on(
+            "change",
+            function() {
 
-						if(jQuery(this).attr("type") == "checkbox") {
-							var value = jQuery(this).is(':checked') ? true : false;
-						}
-						else {
-							var value = jQuery(this).val();
-						}
-						//console.debug("saving "+id+" as "+value);
-						localStorage.setItem(id, value);
-					}
-				}
-				// work out details ...
-				var useSSH = jQuery("input[id=useSSH]").is(":checked");
-				var newServerCanAccessOldServer = jQuery("input[id=newServerCanAccessOldServer]").is(":checked");
-				var newServerHasReadRightsToVersioningRepository = jQuery("input[id=newServerHasReadRightsToVersioningRepository]").is(":checked");
-				var runVerbose = jQuery("input[id=runVerbose]").is(":checked");
-				var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
-				var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
-				var repoType = jQuery("input[name=repoType]:checked").val();
-				var useSVN = repoType == "SVN" ? true : false;
-				var useGIT = repoType == "GIT" ? true : false;
-				var useComposer = jQuery("input[id=useComposer]").is(":checked");
-				var useServerComposer = jQuery("input[id=useServerComposer]").is(":checked");
-				var isLive = jQuery("#Environment").val() == "live";
-				var isDev = (isLive === false) ? true : false;
-				var hasNewDBPrefix = jQuery("input[id=NewDBPrefix]").val().length > 0 ? true : false;
-				var hasNewDBSuffix = jQuery("input[id=NewDBSuffix]").val().length > 0 ? true : false;
-				var oldServerHasSpecialPort = jQuery("input[id=OldSSHPort]").val() == 22 && jQuery("input[id=OldSSHPort]").val().length > 0 ? false : true;
-				var oldServerParamsForRsync = '';
-				var oldServerSSHPortParam = '';
-				var frameworkVersion = "framework";
-				if(jQuery("select[id=SSVersion]").val() == "2.4") {
-					var frameworkVersion = "sapphire";
-				}
-				if(oldServerHasSpecialPort) {
-					oldServerParamsForRsync += "-e &quot;ssh -p [OldSSHPort]&quot;";
-					oldServerSSHPortParam += "-p [OldSSHPort]";
-				}
-				var newServerHasSpecialPort = jQuery("input[id=NewSSHPort]").val() == 22 && jQuery("input[id=NewSSHPort]").val().length > 0 ? false : true;
-				var newServerParamsForRsync = '';
-				var newServerSSHPortParam = '';
-				if(newServerHasSpecialPort) {
-					newServerParamsForRsync += "-e &quot;ssh -p [NewSSHPort]&quot;";
-					newServerSSHPortParam += "-p [OldSSHPort]";
-				}
-				if(!useSSH) {
-					alert("This tool is only of use if you have SSH enabled.");
-				}
-				if(!newServerCanAccessOldServer) {
-					alert("This tool works best if your new server can access your old server through SSH.  If you prefer for the old server to access the new server to move data then you have to change some of the RSYNC methods around.");
-				}
-				if(!newServerHasReadRightsToVersioningRepository) {
-					alert("This tool only works if the new server can read your versioned repository (GIT / SVN)");
-				}
-				if(useSSHAliasOnOldServer) {
-					jQuery(".useSSHAliasOnOldServerON").show();
-					jQuery(".useSSHAliasOnOldServerOFF").hide();
-				}
-				else {
-					jQuery(".useSSHAliasOnOldServerON").hide();
-					jQuery(".useSSHAliasOnOldServerOFF").show();
-				}
-				if(useSSHAliasOnNewServer) {
-					jQuery(".useSSHAliasOnNewServerON").show();
-					jQuery(".useSSHAliasOnNewServerOFF").hide();
-				}
-				else {
-					jQuery(".useSSHAliasOnNewServerON").hide();
-					jQuery(".useSSHAliasOnNewServerOFF").show();
-				}
-				if(useSVN) {
-					jQuery(".useSVNON").show();
-				}
-				else {
-					jQuery(".useSVNON").hide();
-				}
-				if(useGIT) {
-					jQuery(".useGITON").show();
-				}
-				else {
-					jQuery(".useGITON").hide();
-				}
-				if(useComposer) {
-					jQuery(".useServerComposerON").show();
-				}
-				else {
-					jQuery(".useServerComposerON").hide();
-				}
-				if(isLive) {
-					jQuery(".isLiveON").show();
-					jQuery(".isLiveOFF").hide();
-				}
-				else {
-					jQuery(".isLiveON").hide();
-					jQuery(".isLiveOFF").show();
-				}
-				var hasLinuxWebDirUser = jQuery("#LinuxWebDirUser").val().length > 0 ? true : false;
-				var hasLinuxWebDirGroup = jQuery("#LinuxWebDirGroup").val().length > 0 ? true : false;
-				var oldCanUseParentOfRootFolder = jQuery("#OldCanUseParentOfRootFolder").is(":checked");
-				if(oldCanUseParentOfRootFolder === true) {
-					var oldParentFolder = "../";
-				}
-				else {
-					var oldParentFolder = "";
-				}
-				var newCanUseParentOfRootFolder = jQuery("#NewCanUseParentOfRootFolder").is(":checked");
-				if(newCanUseParentOfRootFolder === true) {
-					var newParentFolder = "../";
-				}
-				else {
-					var newParentFolder = "";
-				}
-				//create HTML
-				var originalHTML = "";
-				originalHTML += ""
-				 + "<p class='code'>echo \"------------------------- START ------------------- \"</p>";
-				 if(runVerbose) {
-					 originalHTML += ""
-					 + "<p class='code'>set -v</p>"
-					 + "<p class='code'>set -x</p>";
-				 }
-				 originalHTML += ""
-				 + "<h5># Run on old server</h5>";
-				 if(useSSHAliasOnOldServer) {
-					var loginOnOldServerCode = ""
-					+ "<p class='code'>ssh [OldSSHAlias] &lt;&lt;ONOLDSERVER</p>";
-				 }
-				 else {
-					var loginOnOldServerCode = ""
-					+ "<p class='code'>ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] &lt;&lt;ONOLDSERVER</p>";
+                function newSection(header)
+                {
+                    return "<h5>### " + header + " ###</h5>";
+                }
 
-				 }
-				 if(runVerbose) {
-					 loginOnOldServerCode += ""
-					 + "<p class='code'>set -v</p>"
-					 + "<p class='code'>set -x</p>";
-				 }
-				 originalHTML += ""
-				 + loginOnOldServerCode
-				 + "<p class='comment'># go to web root</p>"
-				 + "<p class='code'>mkdir [OldWebRoot]</p>"
-				 + "<p class='code'>cd [OldWebRoot]</p>"
-				 + "<p class='comment'># dump database</p>"
-				 + "<p class='code'>mysqldump --user=[OldDBUser] -p'[OldDBPassword]' --host=[OldDBHost] [OldDBName] &gt; "+oldParentFolder+"db.sql</p>"
-				 + "<p class='comment'># log out</p>"
-				 + "<p class='code'>ONOLDSERVER</p>"
-				 + "<h5># Prepare locally</h5>"
-				 + "<p class='comment'># create ss environment file:</p>"
-				 + "<p class='code'>echo &quot;&lt;?php</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='code'>define('SS_ENVIRONMENT_TYPE', '[Environment]');</p>"
-				 + "<p class='code'>define('SS_DEFAULT_ADMIN_USERNAME', '[CMSUser]');</p>"
-				 + "<p class='code'>define('SS_DEFAULT_ADMIN_PASSWORD', '[CMSPassword]');</p>"
-				if(hasNewDBPrefix) {
-					originalHTML += ""
-					+ "<p class='code'>define('SS_DATABASE_PREFIX', '[NewDBPrefix]');</p>";
-				}
-				if(hasNewDBSuffix) {
-					originalHTML += ""
-					+ "<p class='code'>define('SS_DATABASE_SUFFIX', '[NewDBSuffix]');</p>";
-				}
-				originalHTML += ""
-				 + "<p class='code'>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');</p>"
-				 + "<p class='code'>define('SS_DATABASE_SERVER', '[NewDBHost]');</p>"
-				 + "<p class='code'>define('SS_DATABASE_USERNAME', '[NewDBUser]');</p>"
-				 + "<p class='code'>define('SS_DATABASE_PASSWORD', '[NewDBPassword]');</p>";
-				 if(isDev) {
-					 originalHTML += ""
-						+ "<p class='code'>define('SS_SEND_ALL_EMAILS_TO', '[CatchAllEmail]');</p>"
-				 }
-				 originalHTML += ""
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='code'>global \\$_FILE_TO_URL_MAPPING; \\$_FILE_TO_URL_MAPPING['[NewWebRoot]'] = '[WebsiteDomainName]';</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='code'>/**</p>"
-				 + "<p class='code'>&nbsp; * Here are some useful snippets for future hacks: </p>"
-				 + "<p class='code'>&nbsp; * EXPORT DB: mysqldump -u [NewDBUser] -p'[NewDBPassword]' -h [NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.sql</p>"
-				 + "<p class='code'>&nbsp; * </p>"
-				 + "<p class='code'>&nbsp; * IMPORT DB: mysql -u [NewDBUser] -p'[NewDBPassword]' -h [NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
-				 + "<p class='code'>&nbsp; *</p>"
-				 + "<p class='code'>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz [NewWebRoot]/assets/ </p>"
-				 + "<p class='code'>&nbsp; *</p>"
-				 + "<p class='code'>&nbsp; *</p>"
-				 + "<p class='code'>&nbsp; *</p>"
-				 + "<p class='code'>&nbsp; */</p>"
-				 + "<p class='code'>\" &gt; temp_ss_environment.php"
-				 + "<h5># Log in to new server</h5>";
-				 if(useSSHAliasOnNewServer) {
-					var loginOnNewServerCode = ""
-					+ "<p class='code'>ssh [NewSSHAlias] &lt;&lt;ONNEWSERVER </p>";
-					var scpLocationNewServer = "[NewSSHAlias]";
-				 }
-				 else {
-					var loginOnNewServerCode  = ""
-					+ "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP] &lt;&lt;ONNEWSERVER </p>";
-					var scpLocationNewServer = "[NewSSHUser]@[NewIP]";
-				 }
-				 if(runVerbose) {
-					 loginOnNewServerCode += ""
-					 + "<p class='code'>set -v</p>"
-					 + "<p class='code'>set -x</p>";
-				 }
-				 originalHTML += loginOnNewServerCode;
-				 originalHTML += ""
-				 + "<p class='comment'># go to web root</p>"
-				 + "<p class='code'>mkdir [NewWebRoot]</p>"
-				 + "<p class='code'>cd [NewWebRoot]</p>"
-				 + "<p class='comment'># set permissions</p>";
-				 if(hasLinuxWebDirUser && hasLinuxWebDirGroup) {
-					 originalHTML += ""
-					 + "<p class='comment'>#create new group: [LinuxWebDirGroup]</p>"
-					 + "<p class='code'>sudo groupadd [LinuxWebDirGroup]</p>"
-					 + "<p class='comment'>#add root to that group</p>"
-					 + "<p class='code'>sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]</p>"
-					 + "<p class='comment'>#make root the owner of the site</p>"
-					 + "<p class='code'>sudo chown -R root [NewWebRoot]</p>"
-					 + "<p class='comment'>#change the group owner to [LinuxWebDirGroup]</p>"
-					 + "<p class='code'>sudo chgrp -R [LinuxWebDirGroup] [NewWebRoot]</p>"
-					 + "<p class='comment'>#set the ownership level to 775 for the website</p>"
-					 + "<p class='code'>sudo chmod -R 775 [NewWebRoot]</p>"
-					 + "<p class='comment'>#the group stays intact for all files/folders created within the parent directory</p>"
-					 + "<p class='code'>sudo chmod g+s [NewWebRoot]</p>"
-					 + "<p class='comment'>#allow www-data to change the asset folder only</p>"
-					 + "<p class='code'>sudo  chown -R www-data [NewWebRoot]/assets/</p>"
-				 }
-				 originalHTML += ""
-				 + "<p class='comment'># backup any _ss_environment.php file:</p>"
-				 + "<p class='code'>mv "+newParentFolder+"_ss_environment.php "+newParentFolder+"_ss_environment.[TimeStamp].php</p>"
-				 + "<p class='comment'># log out</p>"
-				 + "<p class='code'>ONNEWSERVER</p>"
-				 + "<h5># copy _ss_environment.php file from local to new server</h5>"
-				 + "<p class='code'>scp temp_ss_environment.php "+scpLocationNewServer+":[NewWebRoot]/"+newParentFolder+"</p>"
-				 + "<h5># run more stuff on new server</h5>"
-				 + loginOnNewServerCode
-				 + "<p class='comment'># go to web root</p>"
-				 + "<p class='code'>mkdir [NewWebRoot]</p>"
-				 + "<p class='code'>cd [NewWebRoot]</p>"
-				 + "<p class='comment'># change name of temp environment file</p>"
-				 + "<p class='code'>mv "+newParentFolder+"temp_ss_environment.php "+newParentFolder+"_ss_environment.php</p>"
-				 + "<p class='comment'># back up any existing assets</p>"
-				 + "<p class='code'>mv assets assets_backup_[TimeStamp]</p>"
-				 + "<p class='comment'># RSYNC assets from old server</p>"
-				 if(useSSHAliasOnOldServer) {
-					originalHTML += ""
-					+ "<p class='code'>rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ [NewWebRoot]/assets/</p>";
-				 }
-				 else {
-					originalHTML += ""
-					+ "<p class='code'>rsync --stats -chavzPr  " + oldServerParamsForRsync + " [OldSSHUser]@[OldIP]:[OldWebRoot]/assets/ [NewWebRoot]/assets/</p>"
-				 }
-				 originalHTML += ""
-				 + "<p class='comment'># back up any existing db</p>"
-				 + "<p class='code'>mv "+newParentFolder+"db.sql "+newParentFolder+"db.backup_of_db_file.[TimeStamp].sql</p>"
-				 + "<p class='comment'># move db dump to new server (delete from old server)</p>";
-				 if(useSSHAliasOnOldServer) {
-					originalHTML += ""
-					+ "<p class='code'>rsync --stats --remove-source-files -chavzP [OldSSHAlias]:[OldWebRoot]/"+oldParentFolder+"db.sql [NewWebRoot]/"+newParentFolder+"db.sql</p>";
-				 }
-				 else {
-					originalHTML += ""
-					+ "<p class='code'>rsync --stats --remove-source-files -chavzP "+oldServerParamsForRsync+" [OldSSHUser]@[OldIP]:[OldWebRoot]/"+oldParentFolder+"db.sql [NewWebRoot]/"+newParentFolder+"db.sql</p>";
-				 }
-				 originalHTML += ""
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='comment'># back up existing database</p>"
-				 + "<p class='code'>mysqldump --user=[NewDBUser] -p'[NewDBPassword]' --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
-				 + "<p class='comment'># create database if it does not exist</p>"
-				 + "<p class='code'>mysql -u root -p[NewDBPassword] -e 'CREATE DATABASE [NewDBName];'</p>"
-				 + "<p class='comment'># import database</p>"
-				 + "<p class='code'>mysql --user=[NewDBUser] -p'[NewDBPassword]' --host=[NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql</p>"
-				 + "<p class='code'>&nbsp;</p>";
-				 if(useSVN && jQuery("input[id='SVNRepo']").val().length > 0) {
-					 originalHTML += ""
-					 + "<p class='comment'># svn repo</p>"
-					 + "<p class='code'>svn checkout [SVNRepo] .</p>"
-					 + "<p class='code'>&nbsp;</p>";
-				 }
-				 if(useGIT && jQuery("input[id='GITRepo']").val().length > 0) {
-					 originalHTML += ""
-					 + "<p class='comment'># start GIT</p>"
-					 + "<p class='code'>git init .</p>"
-					 + "<p class='comment'># set up remove</p>"
-					 + "<p class='code'>git remote add origin [GITRepo]</p>"
-					 + "<p class='comment'># get all branches / tags</p>"
-					 + "<p class='code'>git fetch --all</p>"
-					 + "<p class='comment'># checkout tag / branch</p>"
-					 + "<p class='code'>git checkout [GITRepoTagOrBranch]</p>"
-					 + "<p class='comment'># update to latest code</p>"
-					 + "<p class='code'>git pull origin [GITRepoTagOrBranch]</p>"
-					 + "<p class='code'>&nbsp;</p>"
-				 }
-				 originalHTML += ""
-				 + "<p class='comment'># backup any existing .htaccess:</p>"
-				 + "<p class='code'>mv .htaccess .htaccess.[TimeStamp]</p>"
-				 + "<p class='comment'># download latest .htaccess version:</p>"
-				 + "<p class='code'>wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/[SSVersion]/.htaccess -O .htaccess</p>"
-				 + "<p class='code'>&nbsp;</p>";
-				 if(useComposer) {
-					 if(useServerComposer) {
-							originalHTML += ""
-							+ "<p class='comment'># run composer:</p>"
-							+ "<p class='code'>composer update</p>"
-					 }
-					 else {
-							originalHTML += ""
-							+ "<p class='comment'># install composer:</p>"
-							+ "<p class='code'>curl -sS https://getcomposer.org/installer | php</p>"
-							+ "<p class='comment'># run composer install:</p>"
-							+ "<p class='code'>php composer.phar update</p>"
-					 }
-				 }
-				 originalHTML += ""
-				 + "<p class='comment'># run dev/build:</p>"
-				 + "<p class='code'>php " + frameworkVersion + "/cli-script.php dev/build flush=all</p>"
-				 + "<p class='comment'># run it again to check for any errors:</p>"
-				 + "<p class='code'>mkdir assets</p>"
-				 + "<p class='code'>php " + frameworkVersion + "/cli-script.php dev/build flush=all</p>"
-				 + "<p class='code'>chown -R www-data assets</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<p class='comment'># log out</p>"
-				 + "<p class='code'>ONNEWSERVER</p>"
-				 + "<p class='comment'># reminder for cron jobs:</p>"
-				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any cron-jobs to transfer?\" -timeout 10</p>"
-				 + "<p class='comment'># reminder for other tasks:</p>"
-				 + "<p class='code'>xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any tasks to run?\" -timeout 10</p>"
-				 + "<p class='comment'># remove backup question:</p>"
-				 + "<p class='code'>removeBackup=$(xmessage -c \"Would you like to remove all backup files? \" -buttons yes,no -default no -print)</p>"
-				 + "<p class='comment'># review answer - if it is not YES then exit</p>"
-				 + "<p class='code'>if [ $removeBackup != \"yes\" ]</p>"
-				 + "<p class='code'>then</p>"
-				 + "<p class='comment'># show end:</p>"
-				 + "<p class='code'>echo \"-------------END ---------\"</p>"
-				 + "<p class='comment'># exit script:</p>"
-				 + "<p class='code'>exit</p>"
-				 + "<p class='comment'># end conditional:</p>"
-				 + "<p class='code'>fi</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<h5># removal backup files from old server:</h5>"
-				 + loginOnOldServerCode
-				 + "<p class='comment'># go to web root</p>"
-				 + "<p class='code'>mkdir [OldWebRoot]</p>"
-				 + "<p class='code'>cd [OldWebRoot]</p>"
-				 + "<p class='comment'># rm database</p>"
-				 + "<p class='code'>rm "+oldParentFolder+"db.sql</p>"
-				 + "<p class='comment'># log out</p>"
-				 + "<p class='code'>ONOLDSERVER</p>"
-				 + "<p class='code'>&nbsp;</p>"
-				 + "<h5># remove backup files from new server:</h5>"
-				 + loginOnNewServerCode
-				 + "<p class='comment'># go to web root:</p>"
-				 + "<p class='code'>mkdir [NewWebRoot]</p>"
-				 + "<p class='code'>cd [NewWebRoot]</p>"
-				 + "<p class='comment'># remove backup _ss_environment.php file:</p>"
-				 + "<p class='code'>rm "+newParentFolder+"_ss_environment.[TimeStamp].php</p>"
-				 + "<p class='comment'># remove assets backup:</p>"
-				 + "<p class='code'>rm assets_backup_[TimeStamp] -rf</p>"
-				 + "<p class='comment'># remove db backup from old server:</p>"
-				 + "<p class='code'>rm "+newParentFolder+"db.backup_of_db_file.[TimeStamp].sql</p>"
-				 + "<p class='comment'># remove db backup from current server:</p>"
-				 + "<p class='code'>rm "+newParentFolder+"db.backup.[TimeStamp].sql</p>"
-				 + "<p class='comment'># remove db imported:</p>"
-				 + "<p class='code'>rm "+newParentFolder+"db.sql</p>"
-				 + "<p class='comment'># remove .htaccess backup:</p>"
-				 + "<p class='code'>rm .htaccess.[TimeStamp]</p>"
-				 + "<p class='comment'># log out:</p>"
-				 + "<p class='code'>ONNEWSERVER</p>"
-				 + "<h5># remove local _ss_environment.php file:</h5>"
-				 + "<p class='code'>rm temp_ss_environment.php "
-				 + "<p class='code'>echo \"-------------END ---------\"</p>";
-				var html = originalHTML;
-				jQuery("form#WizardForm  input, form#WizardForm  select").each(
-					function(i, el) {
-						var name = jQuery(el).attr("id");
-						if(typeof name !== "undefined" || 1 == 1) {
-							var from = "["+ name + "]";
-							var to = jQuery(el).val();
-							if(to.length == 0) {
-								to = "<span style='color: red; font-weight: bold;'>" + name + "</span>";
-							}
-							else {
-								to = "<span style='color: green; font-weight: bold;'>" + to + "</span>";
-							}
-						}
-						//console.debug(from+ " = "+ to);
-						html = html.replaceAll(from, to);
-					}
-				);
-				html = html.replaceAll('[TimeStamp]', Date.now());
-				jQuery("#ToRun").html(html);
-			}
-		);
-		jQuery("#useSSH").change();
-		jQuery("#newServerCanAccessOldServer").change();
-		jQuery("#newServerHasReadRightsToVersioningRepository").change();
-	}
+                function runLocally(command)
+                {
+                    return "<p class='code'>" + command + "</p>";
+                }
+
+                function runOnNewServer(command)
+                {
+                    return runLocally( newServerPreFix + " "  + command.replace("'", "\'") + newServerPostFix);
+                }
+
+                function runOnOldServer(command)
+                {
+                    return runLocally(oldServerPreFix + " " + command.replace("'", "\'") + oldServerPostFix);
+                }
+
+                function comment(comment)
+                {
+                    return "<p class='comment'>#"+comment+"</p>";
+                }
+
+                //save
+                useLocalStorage = jQuery("#useLocalStorage").is(":checked");
+                var id = jQuery(this).attr("id");
+                if(useLocalStorage || id == "useLocalStorage") {
+                    if(typeof id !== "undefined") {
+                        if(jQuery(this).attr("type") == "checkbox") {
+                            var value = jQuery(this).is(':checked') ? true : false;
+                        }
+                        else {
+                            var value = jQuery(this).val();
+                        }
+                        console.log("saving "+id+" as "+value);
+                        localStorage.setItem(id, value);
+                   }
+                }
+
+                // work out details from inputs...
+                var useSSH = jQuery("input[id=useSSH]").is(":checked");
+                var newServerCanAccessOldServer = jQuery("input[id=newServerCanAccessOldServer]").is(":checked");
+                var newServerHasReadRightsToVersioningRepository = jQuery("input[id=newServerHasReadRightsToVersioningRepository]").is(":checked");
+                var runVerbose = jQuery("input[id=runVerbose]").is(":checked");
+                var repoType = jQuery("input[name=repoType]:checked").val();
+                var useSVN = repoType == "SVN" ? true : false;
+                var hasSVNRepo = jQuery("input[id='SVNRepo']").val().length > 0 ? true : false;
+                var useGIT = repoType == "GIT" ? true : false;
+                var hasGitRepo = jQuery("input[id='GITRepo']").val().length > 0 ? true : false;
+                var useComposer = jQuery("input[id=useComposer]").is(":checked");
+                var useServerComposer = jQuery("input[id=useServerComposer]").is(":checked");
+                var isLive = jQuery("#Environment").val() == "live";
+                var isDev = (isLive === false) ? true : false;
+                var hasNewDBPrefix = jQuery("input[id=NewDBPrefix]").val().length > 0 ? true : false;
+                var hasNewDBSuffix = jQuery("input[id=NewDBSuffix]").val().length > 0 ? true : false;
+
+
+                //old server
+                var runVerboseOnOldServer = jQuery("input[id=runVerboseOnOldServer]").is(":checked");
+                var useSSHAliasOnOldServer = jQuery("input[id=useSSHAliasOnOldServer]").is(":checked");
+                var oldServerHasSpecialPort = jQuery("input[id=OldSSHPort]").val() == 22 && jQuery("input[id=OldSSHPort]").val().length > 0 ? false : true;
+                var oldServerParamsForRsync = '';
+                var oldServerSSHPortParam = '';
+                var oldServerPreAllFix = "";
+                var oldServerPreFix = "";
+                var oldServerPostFix = "";
+                var oldServerPostAllFix = "";
+                var loginOnOldServerCode = "";
+                var scpLocationOldServer = "";
+                var oldServerLoginLine = "";
+                if(runVerboseOnOldServer) {
+                   oldServerPreAllFix = " &lt;&lt;ONOLDSERVER";
+                }
+                if(useSSHAliasOnOldServer) {
+                   var loginOnOldServerCode = "ssh [OldSSHAlias] " + oldServerPreAllFix;
+                }
+                else {
+                   var loginOnOldServerCode = "ssh "+oldServerSSHPortParam+" [OldSSHUser]@[OldIP] " + oldServerPreAllFix;
+
+                }
+                if(runVerboseOnOldServer) {
+                   loginOnOldServerCode += ""
+                   + runOnOldServer("set -v")
+                   + runOnOldServer("set -x")
+                   + comment("go to web root")
+                   + runOnOldServer("cd [OldWebRoot]");
+                   oldServerPreFix = "";
+                   oldServerPostAllFix = runLocally("ONOLDSERVER");
+                   oldServerLoginLine = loginOnOldServerCode;
+                } else {
+                   oldServerPreFix = loginOnOldServerCode + ' " cd [OldWebRoot] && ';
+                   oldServerPostFix = ' "';
+                   oldServerPostAllFix = comment('-----------------------');
+                   oldServerLoginLine = "";
+                }
+
+                //new server
+                var runVerboseOnNewServer = jQuery("input[id=runVerboseOnNewServer]").is(":checked");
+                var useSSHAliasOnNewServer = jQuery("input[id=useSSHAliasOnNewServer]").is(":checked");
+                var newServerHasSpecialPort = jQuery("input[id=NewSSHPort]").val() == 22 && jQuery("input[id=OldSSHPort]").val().length > 0 ? false : true;
+                var newServerParamsForRsync = '';
+                var newServerSSHPortParam = '';
+                var newServerPreAllFix = "";
+                var newServerPreFix = "";
+                var newServerPostFix = "";
+                var newServerPostAllFix = "";
+                var loginOnNewServerCode = "";
+                var newServerLoginLine = "";
+                var scpLocationNewServer = "";
+                if(runVerboseOnNewServer) {
+                   newServerPreAllFix = " &lt;&lt;ONNEWSERVER";
+                }
+                if(useSSHAliasOnNewServer) {
+                   loginOnNewServerCode = "ssh [NewSSHAlias]" + newServerPreAllFix;
+                   scpLocationNewServer = "[NewSSHAlias]";
+                }
+                else {
+                   loginOnNewServerCode  = "ssh "+newServerSSHPortParam+" [NewSSHUser]@[NewIP]" + newServerPreAllFix;
+                   scpLocationNewServer = "[NewSSHUser]@[NewIP]";
+                }
+                if(runVerboseOnNewServer) {
+                   loginOnNewServerCode += ""
+                   + runOnNewServer("set -v")
+                   + runOnNewServer("set -x")
+                   + comment("go to web root")
+                   + runOnNewServer("mkdir [NewWebRoot]")
+                   + runOnNewServer("cd [NewWebRoot]");
+                   newServerPreFix = "";
+                   newServerPostAllFix = runLocally("ONNEWSERVER");
+                   newServerLoginLine = loginOnNewServerCode;
+                } else {
+                   newServerPreFix = loginOnNewServerCode + ' " cd [NewWebRoot] && ';
+                   newServerPostFix = ' "';
+                   newServerPostAllFix = comment('-----------------------');;
+                }
+
+                var frameworkVersion = "framework";
+                if(jQuery("select[id=SSVersion]").val() == "2.4") {
+                   frameworkVersion = "sapphire";
+                }
+                if(oldServerHasSpecialPort) {
+                   oldServerParamsForRsync += "-e &quot;ssh -p [OldSSHPort]&quot;";
+                   oldServerSSHPortParam += "-p [OldSSHPort]";
+                }
+                if(newServerHasSpecialPort) {
+                   newServerParamsForRsync += "-e &quot;ssh -p [NewSSHPort]&quot;";
+                   newServerSSHPortParam += "-p [OldSSHPort]";
+                }
+                if(!useSSH) {
+                   alert("This tool is only of use if you have SSH enabled.");
+                }
+                if(!newServerCanAccessOldServer) {
+                   alert("This tool works best if your new server can access your old server through SSH.  If you prefer for the old server to access the new server to move data then you have to change some of the RSYNC methods around.");
+                }
+                if(!newServerHasReadRightsToVersioningRepository) {
+                   alert("This tool only works if the new server can read your versioned repository (GIT / SVN)");
+                }
+                if(useSSHAliasOnOldServer) {
+                   jQuery(".useSSHAliasOnOldServerON").show();
+                   jQuery(".useSSHAliasOnOldServerOFF").hide();
+                }
+                else {
+                   jQuery(".useSSHAliasOnOldServerON").hide();
+                   jQuery(".useSSHAliasOnOldServerOFF").show();
+                }
+                if(useSSHAliasOnNewServer) {
+                   jQuery(".useSSHAliasOnNewServerON").show();
+                   jQuery(".useSSHAliasOnNewServerOFF").hide();
+                }
+                else {
+                   jQuery(".useSSHAliasOnNewServerON").hide();
+                   jQuery(".useSSHAliasOnNewServerOFF").show();
+                }
+                if(useSVN) {
+                   jQuery(".useSVNON").show();
+                }
+                else {
+                   jQuery(".useSVNON").hide();
+                }
+                if(useGIT) {
+                   jQuery(".useGITON").show();
+                }
+                else {
+                   jQuery(".useGITON").hide();
+                }
+                if(useComposer) {
+                   jQuery(".useServerComposerON").show();
+                }
+                else {
+                   jQuery(".useServerComposerON").hide();
+                }
+                if(isLive) {
+                   jQuery(".isLiveON").show();
+                   jQuery(".isLiveOFF").hide();
+                }
+                else {
+                   jQuery(".isLiveON").hide();
+                   jQuery(".isLiveOFF").show();
+                }
+                var hasLinuxWebDirUser = jQuery("#LinuxWebDirUser").val().length > 0 ? true : false;
+                var hasLinuxWebDirGroup = jQuery("#LinuxWebDirGroup").val().length > 0 ? true : false;
+                var oldCanUseParentOfRootFolder = jQuery("#OldCanUseParentOfRootFolder").is(":checked");
+                var oldParentFolder = '';
+                if(oldCanUseParentOfRootFolder === true) {
+                   oldParentFolder = "../";
+                }
+                var newCanUseParentOfRootFolder = jQuery("#NewCanUseParentOfRootFolder").is(":checked");
+                var newParentFolder = "";
+                if(newCanUseParentOfRootFolder === true) {
+                   var newParentFolder = "../";
+                }
+                //create HTML
+                var originalHTML = "";
+                originalHTML += ""
+                + runLocally("echo \"------------------------- START ------------------- \"");
+                if(runVerbose) {
+                   originalHTML += ""
+                   + runLocally(" echo \"Press CTRL+C to proceed.\"")
+                   + runLocally("trap \"pkill -f 'sleep 1h'\" INT")
+                   + runLocally("trap \"set +x ; sleep 1h ; set -x\" DEBUG");
+                }
+                originalHTML += ""
+                + newSection("Run on old server");
+
+                originalHTML += ""
+                + oldServerLoginLine
+                + comment("dump database")
+                + runOnOldServer("mysqldump --user=[OldDBUser] -p'[OldDBPassword]' --host=[OldDBHost] [OldDBName] &gt; "+oldParentFolder+"db.sql")
+                + comment("log out")
+                + oldServerPostAllFix
+                + newSection("Prepare locally")
+                + comment("create ss environment file:")
+                + runLocally("echo &quot;&lt;?php")
+                + runLocally("&nbsp;")
+                + runLocally("define('SS_ENVIRONMENT_TYPE', '[Environment]');")
+                + runLocally("define('SS_DEFAULT_ADMIN_USERNAME', '[CMSUser]');")
+                + runLocally("define('SS_DEFAULT_ADMIN_PASSWORD', '[CMSPassword]');")
+                if(hasNewDBPrefix) {
+                   originalHTML += ""
+                   + runLocally("define('SS_DATABASE_PREFIX', '[NewDBPrefix]');");
+                }
+                if(hasNewDBSuffix) {
+                   originalHTML += ""
+                   + runLocally("define('SS_DATABASE_SUFFIX', '[NewDBSuffix]');");
+                }
+                originalHTML += ""
+                + runLocally("define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');")
+                + runLocally("define('SS_DATABASE_NAME', '[NewDBName]');")
+                + runLocally("define('SS_DATABASE_TIMEZONE', '[NewDBTimeZone]');")
+                + runLocally("define('SS_DATABASE_SERVER', '[NewDBHost]');")
+                + runLocally("define('SS_DATABASE_USERNAME', '[NewDBUser]');")
+                + runLocally("define('SS_DATABASE_PASSWORD', '[NewDBPassword]');");
+                if(isDev) {
+                   originalHTML += ""
+                     + runLocally("define('SS_SEND_ALL_EMAILS_TO', '[CatchAllEmail]');")
+                }
+                originalHTML += ""
+                + runLocally("&nbsp;")
+                + runLocally("global \\$_FILE_TO_URL_MAPPING; \\$_FILE_TO_URL_MAPPING['[NewWebRoot]'] = '[WebsiteDomainName]';")
+                + runLocally("&nbsp;")
+                + runLocally("&nbsp;")
+                + runLocally("/**")
+                + runLocally("&nbsp; * Here are some useful snippets for future hacks: ")
+                + runLocally("&nbsp; * EXPORT DB: mysqldump -u [NewDBUser] -p'[NewDBPassword]' -h [NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.sql")
+                + runLocally("&nbsp; * ")
+                + runLocally("&nbsp; * IMPORT DB: mysql -u [NewDBUser] -p'[NewDBPassword]' -h [NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql")
+                + runLocally("&nbsp; *")
+                + runLocally("&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz [NewWebRoot]/assets/ ")
+                + runLocally("&nbsp; *")
+                + runLocally("&nbsp; *")
+                + runLocally("&nbsp; *")
+                + runLocally("&nbsp; */")
+                + runLocally("\" &gt; temp_ss_environment.php")
+                + newSection("Log in to new server");
+                originalHTML += newServerLoginLine;
+                originalHTML += ""
+                + comment("set permissions");
+                if(hasLinuxWebDirUser && hasLinuxWebDirGroup) {
+                   originalHTML += ""
+                   + comment("create new group: [LinuxWebDirGroup]")
+                   + runOnNewServer("sudo groupadd [LinuxWebDirGroup]")
+                   + comment("add root to that group")
+                   + runOnNewServer("sudo usermod -a -G [LinuxWebDirGroup] [LinuxWebDirUser]")
+                   + comment("make root the owner of the site")
+                   + runOnNewServer("sudo chown -R root [NewWebRoot]")
+                   + comment("change the group owner to [LinuxWebDirGroup]")
+                   + runOnNewServer("sudo chgrp -R [LinuxWebDirGroup] [NewWebRoot]")
+                   + comment("set the ownership level to 775 for the website")
+                   + runOnNewServer("sudo chmod -R 775 [NewWebRoot]")
+                   + comment("the group stays intact for all files/folders created within the parent directory")
+                   + runOnNewServer("sudo chmod g+s [NewWebRoot]")
+                   + comment("allow www-data to change the asset folder only")
+                   + runOnNewServer("sudo chown -R www-data [NewWebRoot]/assets/")
+                }
+                originalHTML += ""
+                + comment("backup any _ss_environment.php file:")
+                + runOnNewServer("mv "+newParentFolder+"_ss_environment.php "+newParentFolder+"_ss_environment.[TimeStamp].php")
+                + comment("log out")
+                + newServerPostAllFix
+                + comment("copy _ss_environment.php file from local to new server")
+                + runLocally("scp temp_ss_environment.php "+scpLocationNewServer+":[NewWebRoot]/"+newParentFolder+"")
+
+                + newSection("back-up files on new server")
+                + newServerLoginLine
+                + comment("change name of temp environment file")
+                + runOnNewServer("mv "+newParentFolder+"temp_ss_environment.php "+newParentFolder+"_ss_environment.php")
+                + comment("back up any existing assets")
+                + runOnNewServer("mv assets assets_backup_[TimeStamp]")
+                + comment("back up any existing db")
+                + runOnNewServer("mv "+newParentFolder+"db.sql "+newParentFolder+"db.backup_of_db_file.[TimeStamp].sql")
+                + comment("make assets folder")
+                + runOnNewServer("mkdir assets")
+                + newServerPostAllFix
+
+                + newSection("RSYNC assets from old server")
+                + runLocally("rm temp_assets -rf")
+                + runLocally("mkdir temp_assets");
+                if(useSSHAliasOnOldServer) {
+                   originalHTML += ""
+                   + runLocally("rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ ./temp_assets")
+                   + runLocally("rsync --stats -chavzPr ./temp_assets [NewSSHAlias]:[NewWebRoot]/assets/");
+                   //+ runOnNewServer("rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ [NewWebRoot]/assets/");
+                }
+                else {
+                   originalHTML += ""
+                   + runLocally("rsync --stats -chavzPr  " + oldServerParamsForRsync + " [OldSSHUser]@[OldIP]:[OldWebRoot]/assets/ ./temp_assets")
+                   + runLocally("rsync --stats -chavzPr  ./temp_assets [NewSSHAlias]:[NewWebRoot]/assets/");
+                }
+                originalHTML += ""
+                + runLocally("rm temp_assets -rf")
+
+                + newSection("move db dump to new server (and delete from old server)")
+                + runLocally("rm temp_mysql -rf")
+                + runLocally("mkdir temp_mysql");
+                if(useSSHAliasOnOldServer) {
+                   originalHTML += ""
+                   + runLocally("rsync --stats --remove-source-files -chavzP [OldSSHAlias]:[OldWebRoot]/"+oldParentFolder+"db.sql ./temp_mysql/db.sql")
+                   + runLocally("rsync --stats --remove-source-files -chavzP ./temp_mysql/db.sql [NewSSHAlias]:[NewWebRoot]/"+newParentFolder+"db.sql");
+                }
+                else {
+                   originalHTML += ""
+                   + runLocally("rsync --stats --remove-source-files -chavzP "+oldServerParamsForRsync+" [OldSSHUser]@[OldIP]:[OldWebRoot]/"+oldParentFolder+"db.sql ./temp_mysql/db.sql");
+                   + runLocally("rsync --stats --remove-source-files -chavzP ./temp_mysql/db.sql [NewSSHAlias]:[NewWebRoot]/"+newParentFolder+"db.sql");
+                }
+                originalHTML += ""
+                + runLocally("rm temp_mysql -rf")
+                + runLocally("&nbsp;")
+
+                + newSection("import DB on new server")
+                + newServerLoginLine
+                + comment("back up existing database on new server")
+                + runOnNewServer("mysqldump --user=[NewDBUser] -p'[NewDBPassword]' --host=[NewDBHost] [NewDBName] &gt; "+newParentFolder+"db.backup.[TimeStamp].sql")
+                + comment("create database if it does not exist")
+                + runOnNewServer("mysql -u root -p'[NewDBPassword]' -e 'CREATE DATABASE [NewDBName];'")
+                + comment("import database")
+                + runOnNewServer("mysql --user=[NewDBUser] -p'[NewDBPassword]' --host=[NewDBHost] [NewDBName] &lt; "+newParentFolder+"db.sql")
+                + runLocally("&nbsp;");
+                if(useSVN && hasSVNRepo) {
+                   originalHTML += ""
+                   + newSection("start SVN")
+                   + runOnNewServer("svn checkout [SVNRepo] .")
+                   + runLocally("&nbsp;");
+                }
+                if(useGIT && hasGitRepo) {
+                   originalHTML += ""
+                   + newSection("start GIT")
+                   + runOnNewServer("git init .")
+                   + comment("set up remove")
+                   + runOnNewServer("git remote add origin [GITRepo]")
+                   + comment("get all branches / tags")
+                   + runOnNewServer("git fetch --all")
+                   + comment("checkout tag / branch")
+                   + runOnNewServer("git checkout [GITRepoTagOrBranch]")
+                   + comment("update to latest code")
+                   + runOnNewServer("git pull origin [GITRepoTagOrBranch]")
+                   + runLocally("&nbsp;")
+                }
+                originalHTML += ""
+                + newSection("htaccess")
+                + comment("backup any existing .htaccess:")
+                + runOnNewServer("mv .htaccess .htaccess.[TimeStamp]")
+                + comment("download latest .htaccess version:")
+                + runOnNewServer("wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/[SSVersion]/.htaccess -O .htaccess")
+                + runLocally("&nbsp;");
+                if(useComposer) {
+                    originalHTML += ""
+                    + newSection("composer");
+                    if(useServerComposer) {
+                        originalHTML += ""
+                        + comment("run composer:")
+                        + runOnNewServer("composer update")
+                    } else {
+                        originalHTML += ""
+                        + comment("install composer:")
+                        + runOnNewServer("curl -sS https://getcomposer.org/installer | php")
+                        + comment("run composer install:")
+                        + runOnNewServer("php composer.phar update")
+                    }
+                }
+                originalHTML += ""
+
+                + newSection("setup Silverstripe")
+                + comment("run dev/build:")
+                + runOnNewServer("php " + frameworkVersion + "/cli-script.php dev/build flush=all")
+                + comment("run it again to check for any errors:")
+                + runOnNewServer("php " + frameworkVersion + "/cli-script.php dev/build flush=all")
+                + runOnNewServer("chown -R www-data assets")
+                + runLocally("&nbsp;")
+                + comment("log out")
+                + newServerPostAllFix
+
+                + newSection("reminders")
+                + comment("reminder for cron jobs:")
+                + runLocally("xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any cron-jobs to transfer?\" -timeout 10")
+                + comment("reminder for other tasks:")
+                + runLocally("xmessage -buttons Yes:0,\"No\":1 -default No -nearmouse \"CHECK: Are there any tasks to run?\" -timeout 10")
+
+                + newSection("backup removal")
+                + comment("remove backup question:")
+                + runLocally("removeBackup=$(xmessage -c \"Would you like to remove all backup files? \" -buttons yes,no -default no -print)")
+                + comment("review answer - if it is not YES then exit")
+                + runLocally("if [ $removeBackup != \"yes\" ]")
+                + runLocally("then")
+                + comment("show end:")
+                + runLocally("echo \"-------------END ---------\"")
+                + comment("exit script:")
+                + runLocally("exit")
+                + comment("end conditional:")
+                + runLocally("fi")
+                + runLocally("&nbsp;")
+                + newSection("removal backup files from old server")
+                + oldServerLoginLine
+                + comment("rm database")
+                + runOnOldServer("rm "+oldParentFolder+"db.sql")
+                + comment("log out")
+                + oldServerPostAllFix
+                + runLocally("&nbsp;")
+                + newSection("remove backup files from new server:")
+                + newServerLoginLine
+                + comment("remove backup _ss_environment.php file:")
+                + runOnNewServer("rm "+newParentFolder+"_ss_environment.[TimeStamp].php")
+                + comment("remove assets backup:")
+                + runOnNewServer("rm assets_backup_[TimeStamp] -rf")
+                + comment("remove db backup from old server")
+                + runOnNewServer("rm "+newParentFolder+"db.backup_of_db_file.[TimeStamp].sql")
+                + comment("remove db backup from current server:")
+                + runOnNewServer("rm "+newParentFolder+"db.backup.[TimeStamp].sql")
+                + comment("remove db imported:")
+                + runOnNewServer("rm "+newParentFolder+"db.sql")
+                + comment("remove .htaccess backup:")
+                + runOnNewServer("rm .htaccess.[TimeStamp]")
+                + comment("log out")
+                + newServerPostAllFix
+                + comment("remove local _ss_environment.php file")
+                + runLocally("rm temp_ss_environment.php ")
+                + runLocally("echo \"-------------END ---------\"");
+                var html = originalHTML;
+                jQuery("form#WizardForm  input, form#WizardForm  select").each(
+                    function(i, el) {
+                        var name = jQuery(el).attr("id");
+                        if(typeof name !== "undefined" || 1 == 1) {
+                            var from = "["+ name + "]";
+                            var to = jQuery(el).val();
+                            if(to.length == 0) {
+                                to = "<span style='color: red; font-weight: bold;'>" + name + "</span>";
+                            }
+                            else {
+                                to = "<span style='color: green; font-weight: bold;'>" + to + "</span>";
+                            }
+                        }
+                        html = html.replaceAll(from, to);
+                    }
+                );
+                html = html.replaceAll('[TimeStamp]', Date.now());
+                jQuery("#ToRun").html(html);
+            }
+        );
+        jQuery("#useLocalStorage").change();
+        jQuery("#useSSH").change();
+        jQuery("#newServerCanAccessOldServer").change();
+        jQuery("#newServerHasReadRightsToVersioningRepository").change();
+    }
 );
 
+
+
 function SelectText(idName) {
-	var el = document.getElementById(idName);
-	var range = document.createRange();
-	range.selectNodeContents(el);
-	var sel = window.getSelection();
-	sel.removeAllRanges();
-	sel.addRange(range);
+    var el = document.getElementById(idName);
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
 
 String.prototype.replaceAll = function(
-	strTarget, // The substring you want to replace
-	strSubString // The string you want to replace in.
+    strTarget, // The substring you want to replace
+    strSubString // The string you want to replace in.
 ){
-	var strText = this;
-	var intIndexOfMatch = strText.indexOf( strTarget );
+    var strText = this;
+    var intIndexOfMatch = strText.indexOf( strTarget );
 
-	// Keep looping while an instance of the target string
-	// still exists in the string.
-	while (intIndexOfMatch != -1){
-		// Relace out the current instance.
-		strText = strText.replace( strTarget, strSubString )
+    // Keep looping while an instance of the target string
+    // still exists in the string.
+    while (intIndexOfMatch != -1){
+        // Relace out the current instance.
+        strText = strText.replace( strTarget, strSubString )
 
-		// Get the index of any next matching substring.
-		intIndexOfMatch = strText.indexOf( strTarget );
-	}
+        // Get the index of any next matching substring.
+        intIndexOfMatch = strText.indexOf( strTarget );
+    }
 
-	// Return the updated string with ALL the target strings
-	// replaced out with the new substring.
-	return( strText );
+    // Return the updated string with ALL the target strings
+    // replaced out with the new substring.
+    return( strText );
 }
 
 
