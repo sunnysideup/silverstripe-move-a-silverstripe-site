@@ -138,19 +138,8 @@
             <label for="Environment">Environment (dev / live / test)</label><select id="Environment"><option value="dev">dev</option><option value="test">test</option><option value="live">live</option></select>
             <label for="SSVersion">Silverstripe Installer Version (e.g. 3.1)</label><select id="SSVersion">
                 <option value="2.4">2.4</option>
-                <option value="3.0">3.0</option>
-                <option value="3.1" selected="selected">3.1</option>
-                <option value="3.2">3.2</option>
-                <option value="3.3">3.3</option>
-                <option value="3.3">3.4</option>
-                <option value="3.3">3.5</option>
-                <option value="3.3">3.6</option>
-                <option value="3.3">3.7</option>
-                <option value="3.3">3.8</option>
-                <option value="4.0">4.0</option>
-                <option value="4.0">4.1</option>
-                <option value="4.0">4.2</option>
-                <option value="4.0">4.3</option>
+                <option value="3.6.5" selected="selected">3</option>
+                <option value="4.0">4</option>
             </select>
             <label for="CMSUser">default CMS User</label><input type="text" id="CMSUser">
             <label for="CMSPassword">default CMS Password</label><input type="text" id="CMSPassword">
@@ -776,7 +765,6 @@ jQuery(document).ready(
                 + runOnNewServer("php " + frameworkVersion + "/cli-script.php dev/build flush=all")
                 + comment("run it again to check for any errors:")
                 + runOnNewServer("php " + frameworkVersion + "/cli-script.php dev/build flush=all")
-                + runOnNewServer("chown -R www-data assets")
                 + runLocally("&nbsp;")
                 + comment("log out")
                 + newServerPostAllFix
