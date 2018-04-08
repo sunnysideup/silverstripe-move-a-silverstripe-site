@@ -679,13 +679,13 @@ jQuery(document).ready(
                 if(useSSHAliasOnOldServer) {
                    originalHTML += ""
                    + runLocally("rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ ./temp_assets")
-                   + runLocally("rsync --stats -chavzPr ./temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
+                   + runLocally("rsync --stats -chavzPr temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
                    //+ runOnNewServer("rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ [NewWebRoot]/assets/");
                 }
                 else {
                    originalHTML += ""
                    + runLocally("rsync --stats -chavzPr  " + oldServerParamsForRsync + " [OldSSHUser]@[OldIP]:[OldWebRoot]/assets/ ./temp_assets")
-                   + runLocally("rsync --stats -chavzPr  ./temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
+                   + runLocally("rsync --stats -chavzPr  temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
                 }
                 originalHTML += ""
                 + runLocally("rm temp_assets -rf")
