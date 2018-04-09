@@ -725,13 +725,17 @@ jQuery(document).ready(
                 if(useGIT && hasGitRepo) {
                    originalHTML += ""
                    + newSection("start GIT")
+                   + comment("add bitbucket and github to know hosts")
+                   + runOnNewServer("ssh-keyscan github.com >> ~/.ssh/known_hosts")
+                   + runOnNewServer("ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts")
+                   + comment("init git")
                    + runOnNewServer("git init .")
                    + comment("set up remove")
                    + runOnNewServer("git remote add origin [GITRepo]")
                    + comment("get all branches / tags")
                    + runOnNewServer("git fetch --all")
                    + comment("checkout tag / branch")
-                   + runOnNewServer("yes | git checkout [GITRepoTagOrBranch]")
+                   + runOnNewServer("git checkout [GITRepoTagOrBranch]")
                    + comment("update to latest code")
                    + runOnNewServer("git pull origin [GITRepoTagOrBranch]")
                    + comment("set master as branch")
@@ -745,9 +749,11 @@ jQuery(document).ready(
                 + comment("download latest .htaccess version:")
                 + runOnNewServer("wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/[SSVersion]/.htaccess -O .htaccess")
                 + comment("script for db dump")
-                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Dump_Silverstripe_Database.php .")
+                + runOnNewServer("rm ./../Dump_Silverstripe_Database.php -f")
+                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Dump_Silverstripe_Database.php ./..")
                 + comment("script for tag update")
-                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Git_Tag_Change_Composer_Update.php .")
+                + runOnNewServer("rm ./../Git_Tag_Change_Composer_Update.php -f")
+                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Git_Tag_Change_Composer_Update.php ./..")
                 + runLocally("&nbsp;");
                 if(useComposer) {
                     originalHTML += ""
