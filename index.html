@@ -679,13 +679,13 @@ jQuery(document).ready(
                 if(useSSHAliasOnOldServer) {
                    originalHTML += ""
                    + runLocally("rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ ./temp_assets")
-                   + runLocally("rsync --stats -chavzPr ./temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
+                   + runLocally("rsync --stats -chavzPr temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
                    //+ runOnNewServer("rsync --stats -chavzPr [OldSSHAlias]:[OldWebRoot]/assets/ [NewWebRoot]/assets/");
                 }
                 else {
                    originalHTML += ""
                    + runLocally("rsync --stats -chavzPr  " + oldServerParamsForRsync + " [OldSSHUser]@[OldIP]:[OldWebRoot]/assets/ ./temp_assets")
-                   + runLocally("rsync --stats -chavzPr  ./temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
+                   + runLocally("rsync --stats -chavzPr  temp_assets/* [NewSSHAlias]:[NewWebRoot]/assets/");
                 }
                 originalHTML += ""
                 + runLocally("rm temp_assets -rf")
@@ -725,6 +725,10 @@ jQuery(document).ready(
                 if(useGIT && hasGitRepo) {
                    originalHTML += ""
                    + newSection("start GIT")
+                   + comment("add bitbucket and github to know hosts")
+                   + runOnNewServer("ssh-keyscan github.com >> ~/.ssh/known_hosts")
+                   + runOnNewServer("ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts")
+                   + comment("init git")
                    + runOnNewServer("git init .")
                    + comment("set up remove")
                    + runOnNewServer("git remote add origin [GITRepo]")
@@ -734,6 +738,8 @@ jQuery(document).ready(
                    + runOnNewServer("git checkout [GITRepoTagOrBranch]")
                    + comment("update to latest code")
                    + runOnNewServer("git pull origin [GITRepoTagOrBranch]")
+                   + comment("set master as branch")
+                   + runOnNewServer("git branch --set-upstream-to=origin/master")
                    + runLocally("&nbsp;")
                 }
                 originalHTML += ""
@@ -743,9 +749,11 @@ jQuery(document).ready(
                 + comment("download latest .htaccess version:")
                 + runOnNewServer("wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/[SSVersion]/.htaccess -O .htaccess")
                 + comment("script for db dump")
-                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Dump_Silverstripe_Database.php .")
+                + runOnNewServer("rm ./../Dump_Silverstripe_Database.php -f")
+                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Dump_Silverstripe_Database.php ./..")
                 + comment("script for tag update")
-                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Git_Tag_Change_Composer_Update.php .")
+                + runOnNewServer("rm ./../Git_Tag_Change_Composer_Update.php -f")
+                + runOnNewServer("wget https://raw.githubusercontent.com/sunnysideup/silverstripe-server-management/master/src/Git_Tag_Change_Composer_Update.php ./..")
                 + runLocally("&nbsp;");
                 if(useComposer) {
                     originalHTML += ""
