@@ -37,14 +37,14 @@
             }
         }
     </style>
-    <link rel="icon" type="image/png" href="http://move-a-silverstripe-site.ssmods.com/favicon.ico">
+    <link rel="icon" type="image/png" href="https://move-a-silverstripe-site.ssmods.com/favicon.ico">
 </head>
 <body>
     <header>
         <h1>Transfer / Copy / Migrate / Deploy Silverstripe Websites</h1>
 
         <p>
-            I have moved a ton of <a href="http://www.silverstripe.org/">Silverstripe Websites</a> over the years, but I still have to think about the steps every time.
+            I have moved a ton of <a href="https://www.silverstripe.org/">Silverstripe Websites</a> over the years, but I still have to think about the steps every time.
             So here is a <em>script generator</em> of sorts that helps you transfer a Silverstripe website from one server to another server.
         </p>
         <p>By completing the details in the form below you build a command line (SSH) list of steps you can copy and then paste into a bash file (after careful inspection!) to migrate your website.</p>
@@ -56,7 +56,7 @@
             <li>parent folder of web-root folder is writable and can be used to store files</li>
             <li>site uses _ss_environment.php file</li>
             <li>Mysql Database has already been created on new server</li>
-            <li>the new server can access the old server without password by means of <a href="http://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
+            <li>the new server can access the old server without password by means of <a href="https://www.thegeekstuff.com/2008/11/3-steps-to-perform-ssh-login-without-password-using-ssh-keygen-ssh-copy-id/">public and private keys</a></li>
             <li>to make sure it runs smoothly you need </li>
         </ul>
         <h2>How this works?</h2>
@@ -68,7 +68,7 @@
         <h2>Need help?</h2>
         <p>
             If you need help upgrading or migrating Silverstripe websites then please do not hesitate to contact
-            <a href="http://www.sunnysideup.co.nz">Sunny Side Up</a> for help. We offer competitive rates and high quality work.
+            <a href="https://www.sunnysideup.co.nz">Sunny Side Up</a> for help. We offer competitive rates and high quality work.
         </p>
         <h2>Important note about security</h2>
         <p>
@@ -109,11 +109,11 @@
         <fieldset>
             <h2>Old Server</h2>
             <ul class="checkboxes">
-                <li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="http://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
+                <li><input id="useSSHAliasOnOldServer" type="checkbox" value="1"><label for="useSSHAliasOnOldServer" class="checkbox">use <a href="https://collectiveidea.com/blog/archives/2011/02/04/how-to-ssh-aliases/">SSH alias</a> on old server</label></li>
                 <li><input id="runVerboseOnOldServer" type="checkbox" value="1"><label for="runVerboseOnOldServer" class="checkbox">run verbose (may not work on all servers)</label></li>
                 <li><input id="OldCanUseParentOfRootFolder" type="checkbox" checked="checked"><label for="OldCanUseParentOfRootFolder" class="checkbox">can use parent of root web folder for copying</label></li>
             </ul>
-            <label for="OldWebRoot"><a href="http://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="OldWebRoot" value="">
+            <label for="OldWebRoot"><a href="https://www.cyberciti.biz/faq/pwd-linux-unix-command-examples/">web root</a> without trailing slash</label><input type="text" id="OldWebRoot" value="">
             <div class="useSSHAliasOnOldServerON" style="display: none;">
                 <label for="OldSSHAlias">SSH Alias</label><input type="text" id="OldSSHAlias" value="">
             </div>
@@ -195,7 +195,7 @@
 
     <div id="ToRunOuter">
         <div id="ToRun"><h5># Log in to old server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span><h5># Run on old server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># dump database</p>mysqldump --user=<span style="color: red; font-weight: bold;">OldDBUser</span> -p=<span style="color: red; font-weight: bold;">'OldDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">OldDBName</span> &gt; ../db.sql<p class="comment"># log out</p>exit<br><br><h5># Log in to new server</h5>ssh -p <span style="color: green; font-weight: bold;">22</span> <span style="color: red; font-weight: bold;">NewSSHUser</span>@<span style="color: red; font-weight: bold;">NewIP</span><br><br><h5># Run on new server</h5><p class="comment"># go to web root</p>cd <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span><br><p class="comment"># back up any existing assets</p>mv assets assets_backup_1442444305646<p class="comment"># RSYNC assets from old server</p>rsync --stats -chavzPr "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/<p class="comment"># back up any existing db</p>mv ../db.sql ../db.backup_of_db_file.1442444305646.sql<p class="comment"># move db dump to new server (delete from old server)</p>rsync --stats --remove-source-files -chavzP "ssh -p <span style="color: green; font-weight: bold;">22</span>" <span style="color: red; font-weight: bold;">OldSSHUser</span>@<span style="color: red; font-weight: bold;">OldIP</span>:<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/../db.sql<br><p class="comment"># back up existing database</p>mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.backup.1442444305646.sql<p class="comment"># import database</p>mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br><p class="comment"># backup any existing .htaccess:</p>mv .htaccess .htaccess.1442444305646<p class="comment"># download latest .htaccess version:</p>wget https://raw.githubusercontent.com/silverstripe/silverstripe-installer/<span style="color: green; font-weight: bold;">3.1</span>/.htaccess -O .htaccess<br><p class="comment"># backup any _ss_environment.php file:</p>mv ../_ss_environment.php ../_ss_environment.1442444305646.php<p class="comment"># create ss environment file:</p>echo "&lt;?php<br><br>define('SS_ENVIRONMENT_TYPE', '<span style="color: green; font-weight: bold;">dev</span>');<br>define('SS_DEFAULT_ADMIN_USERNAME', '<span style="color: red; font-weight: bold;">CMSUser</span>');<br>define('SS_DEFAULT_ADMIN_PASSWORD', '<span style="color: red; font-weight: bold;">CMSPassword</span>');<br><br>define('SS_DATABASE_PREFIX', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_DATABASE_CLASS','MySQLDatabase');<br>define('SS_DATABASE_SERVER', '<span style="color: green; font-weight: bold;">localhost</span>');<br>define('SS_DATABASE_USERNAME', '<span style="color: red; font-weight: bold;">NewDBUser</span>');<br>define('SS_DATABASE_PASSWORD', '<span style="color: red; font-weight: bold;">NewDBPassword</span>');<br><br>global $_FILE_TO_URL_MAPPING; $_FILE_TO_URL_MAPPING['<span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>'] = '<span style="color: red; font-weight: bold;">WebsiteDomainName</span>';<br><br>/**<br>&nbsp; * Here are some useful snippets for future hacks: <br>&nbsp; * EXPORT DB: mysqldump --user=<span style="color: red; font-weight: bold;">NewDBUser</span> -p=<span style="color: red; font-weight: bold;">'NewDBPassword'</span> --host=<span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &gt; ../db.sql<br>&nbsp; * <br>&nbsp; * IMPORT DB: mysql --user <span style="color: red; font-weight: bold;">NewDBUser</span> --password<span style="color: red; font-weight: bold;">NewDBPassword</span> --host <span style="color: green; font-weight: bold;">localhost</span> <span style="color: red; font-weight: bold;">NewDBName</span> &lt; ../db.sql<br>&nbsp; *<br>&nbsp; * G-ZIP ASSETS: tar -zcvf assets.tar.gz <span style="color: green; font-weight: bold;">/var/www/mysite.co.nz</span>/assets/ <br>&nbsp; *<br>&nbsp; *<br>&nbsp; *<br>&nbsp; */<br>" &gt; ../_ss_environment.php<br><p class="comment"># run dev/build:</p>php framework/cli-script.php dev/build flush=all<p class="comment"># run it again to check for any errors:</p>php framework/cli-script.php dev/build flush=all<br><p class="comment"># check for cron jobs:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any cron-jobs to transfer?" -timeout 10<p class="comment"># check for other tasks:</p>xmessage -buttons Yes:0,"No":1 -default No -nearmouse "Are there any tasks to run?" -timeout 10<br><br><br><br></div>
-        <p><a href="http://move-a-silverstripe-site.ssmods.com/index.html#" id="CopyToClipBoard">copy to clipboard ...</a></p>
+        <p><a href="https://move-a-silverstripe-site.ssmods.com/index.html#" id="CopyToClipBoard">copy to clipboard ...</a></p>
         <h5 style="color: red">Please use the script template at your own risk!</h5>
     </div>
     <footer>
@@ -241,7 +241,7 @@
   RewriteEngine On
   RewriteCond %{HTTP_HOST} ^temp-old.mysite.co.nz$ [OR]
   RewriteCond %{HTTP_HOST} ^www.temp-old.mysite.co.nz$
-  RewriteRule (.*)$ http://www.mysite.co.nz/$1 [R=302,L]
+  RewriteRule (.*)$ https://www.mysite.co.nz/$1 [R=302,L]
 &lt;/IfModule&gt;
         </pre>
         <p><strong>do not use 301 - ever - because it does not help you much and errors are fatal!</strong></p>
@@ -302,7 +302,7 @@ jQuery(document).ready(
                 var siteWithDashes = site.replace(/\./g, "_");
                 if(jQuery("#OldWebRoot").val() == "")          {jQuery("#OldWebRoot").val("/var/www/"+site);}
                 if(jQuery("#OldDBName").val() == "")           {jQuery("#OldDBName").val(siteWithDashes);}
-                if(jQuery("#WebsiteDomainName").val() == "")   {jQuery("#WebsiteDomainName").val("http://www."+site);}
+                if(jQuery("#WebsiteDomainName").val() == "")   {jQuery("#WebsiteDomainName").val("https://www."+site);}
                 if(jQuery("#NewDBName").val() == "")   {jQuery("#NewDBName").val(siteWithDashes);}
 
             }
